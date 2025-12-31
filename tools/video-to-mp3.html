@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to MP3 - QuickNova</title>
+    <meta name="description" content="Extract audio from video files. Free online tool.">
+    <meta name="keywords" content="video to mp3, extract audio, mp4 to mp3, video converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/video-to-mp3.html">
+    <meta property="og:title" content="Video to MP3 - QuickNova">
+    <meta property="og:description" content="Extract audio from video files. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/video-to-mp3.html">
+    <meta property="twitter:title" content="Video to MP3 - QuickNova">
+    <meta property="twitter:description" content="Extract audio from video files. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/video-to-mp3.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Audio / Video</span>
+                <h1 style="margin-top: 1rem;">Video to MP3</h1>
+                <p style="color: var(--text-muted);">Extract audio from video files.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🎥</div>
+                        <h3>Click to Upload Video</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop (MP4, MKV, AVI, MOV)</p>
+                        <input type="file" id="file-input" accept="video/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Video</button>
+                    </div>
+
+                    <div id="editor-container" style="display: none; margin-top: 2rem;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                            <div style="width: 100%; max-width: 600px; background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                                <h4 style="margin-bottom: 1rem;">Source Video</h4>
+                                <video id="video-preview" controls style="width: 100%; border-radius: 4px; max-height: 300px;"></video>
+                                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                                    Filename: <span id="filename-display">video.mp4</span>
+                                </div>
+                            </div>
+
+                            <div id="status-container" style="width: 100%; max-width: 600px; display: none;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span id="status-text">Processing...</span>
+                                    <span id="progress-text">0%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden;">
+                                    <div id="progress-bar" style="width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.3s ease;"></div>
+                                </div>
+                            </div>
+
+                            <div class="actions" style="display: flex; gap: 1rem;">
+                                <button id="convert-btn" class="btn btn-primary">Convert to MP3</button>
+                                <button id="download-btn" class="btn btn-success" style="display: none;">Download MP3</button>
+                                <button id="reset-btn" class="btn btn-secondary">Convert Another</button>
+                            </div>
+
+                            <div class="alert" style="background: rgba(0, 112, 243, 0.1); border: 1px solid rgba(0, 112, 243, 0.2); padding: 1rem; border-radius: 8px; font-size: 0.9rem; max-width: 600px;">
+                                <strong>Note:</strong> This tool runs entirely in your browser using WebAssembly. Large files may take some time to process.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/video-to-mp3.js"></script>
+</body>
+</html>

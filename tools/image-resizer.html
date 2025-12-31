@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer - QuickNova</title>
+    <meta name="description" content="Resize images to specific dimensions. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Image Tool</span>
+                <h1 style="margin-top: 1rem;">Image Resizer</h1>
+                <p style="color: var(--text-muted);">Resize images to specific dimensions.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📏</div>
+                        <h3>Click to Upload Image</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop (JPG, PNG, WEBP)</p>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Image</button>
+                    </div>
+
+                    <div id="editor-container" style="display: none; margin-top: 2rem;">
+                        <div class="image-preview-container" style="margin-bottom: 2rem; overflow: auto; max-height: 500px; border: 1px solid var(--border-subtle); border-radius: 8px; text-align: center; background: var(--bg-card);">
+                            <img id="preview-image" src="" alt="Preview" style="max-width: 100%; height: auto;">
+                        </div>
+
+                        <div class="controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                            <div class="control-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Resize By</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="resize-type" value="dimensions" checked> Dimensions
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="resize-type" value="percentage"> Percentage
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="control-group" id="dimensions-controls">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <label for="width-input" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Width (px)</label>
+                                        <input type="number" id="width-input" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-input); color: var(--text);">
+                                    </div>
+                                    <div>
+                                        <label for="height-input" style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Height (px)</label>
+                                        <input type="number" id="height-input" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-input); color: var(--text);">
+                                    </div>
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                                        <input type="checkbox" id="lock-aspect-ratio" checked> Lock Aspect Ratio
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="control-group" id="percentage-controls" style="display: none;">
+                                <label for="percentage-input" style="display: block; margin-bottom: 0.5rem;">Percentage</label>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <input type="range" id="percentage-slider" min="1" max="200" value="100" style="flex: 1;">
+                                    <span id="percentage-value" style="min-width: 3rem;">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="actions" style="display: flex; gap: 1rem; justify-content: center;">
+                            <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                            <button id="download-btn" class="btn btn-primary">Download Resized Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/image-resizer.js"></script>
+</body>
+</html>

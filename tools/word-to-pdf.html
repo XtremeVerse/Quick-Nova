@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word to PDF - QuickNova</title>
+    <meta name="description" content="Convert Word documents to PDF. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Pdf Tool</span>
+                <h1 style="margin-top: 1rem;">Word to PDF</h1>
+                <p style="color: var(--text-muted);">Convert Word documents to PDF.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📑</div>
+                        <h3>Click to Upload Word Document</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop .docx file here</p>
+                        <input type="file" id="file-input" accept=".docx" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Word File</button>
+                    </div>
+
+                    <div id="file-info" style="margin-top: 2rem; display: none; padding: 1rem; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span id="file-name" style="font-weight: 600;">document.docx</span>
+                        </div>
+                        <div id="preview-container" style="max-height: 400px; overflow-y: auto; padding: 1rem; border: 1px solid var(--border-subtle); background: white; color: black; margin-bottom: 1rem; border-radius: 4px;">
+                            <!-- Preview content -->
+                        </div>
+                        <button id="convert-btn" class="btn btn-primary" style="width: 100%;">Convert to PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/word-to-pdf.js"></script>
+</body>
+</html>

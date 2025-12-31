@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech - QuickNova</title>
+    <meta name="description" content="Convert text to spoken audio. Multiple languages and voices supported.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Audio / Video</span>
+                <h1 style="margin-top: 1rem;">Text to Speech</h1>
+                <p style="color: var(--text-muted);">Listen to your text with natural sounding voices.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+                    
+                    <div class="input-area">
+                        <textarea id="text-input" class="text-area" placeholder="Enter text here to speak..." style="min-height: 300px; width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg);"></textarea>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Voice</label>
+                            <select id="voice-select" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-elevated);">
+                                <option value="">Default</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Rate (Speed)</label>
+                            <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1" style="width: 100%;">
+                            <div style="text-align: right; font-size: 0.9rem; color: var(--text-muted);">1x</div>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Pitch</label>
+                            <input type="range" id="pitch" min="0" max="2" value="1" step="0.1" style="width: 100%;">
+                            <div style="text-align: right; font-size: 0.9rem; color: var(--text-muted);">1</div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: auto;">
+                            <button id="speak-btn" class="btn btn-primary" style="flex: 1;">▶ Speak</button>
+                            <button id="stop-btn" class="btn btn-secondary" style="flex: 1;">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/text-to-speech.js"></script>
+</body>
+</html>

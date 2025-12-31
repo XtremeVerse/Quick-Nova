@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word - QuickNova</title>
+    <meta name="description" content="Convert PDF files to Word documents. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Pdf Tool</span>
+                <h1 style="margin-top: 1rem;">PDF to Word</h1>
+                <p style="color: var(--text-muted);">Convert PDF files to Word documents.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+                        <h3>Click to Upload PDF</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop PDF file here</p>
+                        <input type="file" id="file-input" accept=".pdf" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select PDF</button>
+                    </div>
+
+                    <div id="file-info" style="margin-top: 2rem; display: none; padding: 1rem; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span id="file-name" style="font-weight: 600;">document.pdf</span>
+                            <span id="page-count" style="color: var(--text-muted);"></span>
+                        </div>
+                        <div class="alert" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2); color: var(--text); padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;">
+                            <strong>Note:</strong> This tool extracts text from the PDF. Complex formatting, images, and tables might not be preserved perfectly.
+                        </div>
+                        <button id="convert-btn" class="btn btn-primary" style="width: 100%;">Convert to Word</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+    <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/pdf-to-word.js"></script>
+</body>
+</html>

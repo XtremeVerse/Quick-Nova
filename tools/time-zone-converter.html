@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Zone Converter - QuickNova</title>
+    <meta name="description" content="Convert time between zones. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility Tool</span>
+                <h1 style="margin-top: 1rem;">Time Zone Converter</h1>
+                <p style="color: var(--text-muted);">Convert time between zones.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div style="display:grid; gap:1rem; max-width:860px; margin:0 auto;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;">Date & Time</label>
+                                <input id="datetime-input" type="datetime-local" class="input">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;">From Time Zone</label>
+                                <select id="from-zone" class="input"></select>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;">To Time Zone</label>
+                                <select id="to-zone" class="input"></select>
+                            </div>
+                            <div style="display:flex; align-items:flex-end; justify-content:flex-start;">
+                                <button id="convert-btn" class="btn btn-primary">Convert</button>
+                            </div>
+                        </div>
+                        <div id="result-card" class="glass" style="display:none; padding:1rem; border:1px solid var(--border-subtle); border-radius:12px;">
+                            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span style="color:var(--text-muted)">From</span>
+                                    <span id="from-display" style="font-weight:600;"></span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span style="color:var(--text-muted)">To</span>
+                                    <span id="to-display" style="font-weight:600;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">Uses worldtimeapi.org for offsets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/time-zone-converter.js"></script>
+</body>
+</html>

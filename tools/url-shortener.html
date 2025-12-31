@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - QuickNova</title>
+    <meta name="description" content="Shorten long URLs. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility Tool</span>
+                <h1 style="margin-top: 1rem;">URL Shortener</h1>
+                <p style="color: var(--text-muted);">Shorten long URLs.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div style="display:grid; gap:1rem; max-width:720px; margin:0 auto;">
+                        <label style="font-weight:600;">Long URL</label>
+                        <input id="long-url" class="input" placeholder="Paste a long URL here" style="height:44px;">
+                        <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:0.5rem;">
+                            <button id="shorten-btn" class="btn btn-primary">Shorten</button>
+                            <button id="clear-btn" class="btn btn-ghost">Clear</button>
+                        </div>
+                        <div id="result-card" class="glass" style="display:none; padding:1rem; border:1px solid var(--border-subtle); border-radius:12px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
+                                <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    <a id="short-url" href="#" target="_blank" rel="noopener" style="font-weight:600; color:var(--accent-blue);"></a>
+                                </div>
+                                <div style="display:flex; gap:0.5rem;">
+                                    <button id="copy-btn" class="btn btn-secondary btn-sm">Copy</button>
+                                    <a id="open-btn" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Open</a>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">Powered by is.gd free API</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/url-shortener.js"></script>
+</body>
+</html>

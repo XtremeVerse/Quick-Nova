@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Recorder - QuickNova</title>
+    <meta name="description" content="Free online voice recorder. Record audio directly from your browser and save as MP3/WebM.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Audio/Video</span>
+                <h1 style="margin-top: 1rem;">Voice Recorder</h1>
+                <p style="color: var(--text-muted);">Record audio directly in your browser.</p>
+            </div>
+
+            <div class="tool-workspace" style="text-align: center;">
+                <div id="visualizer" style="height: 100px; background: rgba(0,0,0,0.05); margin-bottom: 2rem; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: var(--text-muted);">Waveform Visualization</span>
+                </div>
+
+                <div style="font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-bottom: 2rem;" id="timer">00:00</div>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                    <button id="record-btn" class="btn btn-primary" style="border-radius: 50%; width: 64px; height: 64px; padding: 0;">🔴</button>
+                    <button id="stop-btn" class="btn btn-secondary" style="border-radius: 50%; width: 64px; height: 64px; padding: 0;" disabled>⏹️</button>
+                </div>
+
+                <div id="recordings-list" style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <!-- Recordings will appear here -->
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h2>How to use</h2>
+                <ol style="padding-left: 1.5rem; margin-bottom: 2rem; color: var(--text-muted);">
+                    <li>Click the red microphone button to start recording.</li>
+                    <li>Allow microphone access when prompted.</li>
+                    <li>Click the stop button when finished.</li>
+                    <li>Listen to or download your recording.</li>
+                </ol>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/voice-recorder.js"></script>
+</body>
+</html>

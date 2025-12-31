@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Image - QuickNova</title>
+    <meta name="description" content="Convert PDF pages to high-quality images (JPG/PNG). Free online converter.">
+    <meta name="keywords" content="pdf to image, pdf to jpg, pdf to png, convert pdf to image, free pdf converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/pdf-to-image.html">
+    <meta property="og:title" content="PDF to Image - QuickNova">
+    <meta property="og:description" content="Convert PDF pages to high-quality images. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/pdf-to-image.html">
+    <meta property="twitter:title" content="PDF to Image - QuickNova">
+    <meta property="twitter:description" content="Convert PDF pages to high-quality images. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/pdf-to-image.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    
+    <!-- Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        // Set worker for PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header fade-in">
+                <h1>PDF to Image</h1>
+                <p>Convert PDF pages to high-quality JPG or PNG images instantly.</p>
+            </div>
+
+            <div class="tool-interface fade-in" style="animation-delay: 0.1s;">
+                <div class="upload-area" id="drop-zone">
+                    <input type="file" id="file-input" accept=".pdf" hidden>
+                    <div class="upload-icon">📄</div>
+                    <h3>Drop your PDF here</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">or click to browse</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF File</button>
+                </div>
+
+                <div id="preview-area" style="display: none; margin-top: 2rem;">
+                    <div class="settings-panel" style="background: var(--bg-elevated); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-end;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Image Format</label>
+                                <select id="format-select" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: var(--bg); border: 1px solid var(--border-subtle);">
+                                    <option value="jpeg">JPG (Smaller Size)</option>
+                                    <option value="png">PNG (High Quality)</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Scale (Quality)</label>
+                                <select id="scale-select" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: var(--bg); border: 1px solid var(--border-subtle);">
+                                    <option value="1">1x (Standard)</option>
+                                    <option value="1.5">1.5x (Better)</option>
+                                    <option value="2" selected>2x (High Res)</option>
+                                </select>
+                            </div>
+                            <button id="convert-btn" class="btn btn-primary" style="min-width: 150px;">Convert All Pages</button>
+                        </div>
+                    </div>
+
+                    <div id="pages-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <!-- Preview thumbnails will go here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instructions Section -->
+            <section class="tool-info fade-in" style="animation-delay: 0.2s; margin-top: 4rem;">
+                <h2>How to convert PDF to Image?</h2>
+                <ol style="margin-left: 1.5rem; color: var(--text-muted); line-height: 1.8;">
+                    <li>Upload your PDF file using the button above.</li>
+                    <li>Choose your preferred image format (JPG or PNG).</li>
+                    <li>Adjust the quality scale if needed (2x is recommended for clear text).</li>
+                    <li>Click "Convert All Pages" to download all images as a ZIP file.</li>
+                    <li>Or download individual pages by clicking on them.</li>
+                </ol>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div style="text-align:center;color:var(--text-muted);font-size:0.9rem;">
+                &copy; 2024 QuickNova. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/pdf-to-image.js"></script>
+</body>
+</html>

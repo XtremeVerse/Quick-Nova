@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - QuickNova</title>
+    <meta name="description" content="Learn about QuickNova's mission to provide free, fast, and secure online tools for everyone.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .about-hero {
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+        .value-card {
+            background: var(--bg-elevated);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        .value-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html" class="active">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="about-hero fade-in">
+                <h1 style="font-size: 3rem; margin-bottom: 1.5rem;">Tools for the <span style="color: var(--accent-blue);">Modern Web</span></h1>
+                <p style="font-size: 1.2rem; color: var(--text-muted); line-height: 1.8;">
+                    QuickNova was built with a simple mission: to make powerful digital tools accessible to everyone, instantly, and for free. No sign-ups, no paywalls, no nonsense.
+                </p>
+            </div>
+
+            <div class="about-grid fade-in" style="animation-delay: 0.1s;">
+                <div class="value-card">
+                    <span class="value-icon">🚀</span>
+                    <h3>Speed First</h3>
+                    <p style="color: var(--text-muted);">We believe tools should be faster than you are. Our applications are optimized for instant loading and rapid processing.</p>
+                </div>
+                <div class="value-card">
+                    <span class="value-icon">🛡️</span>
+                    <h3>Privacy Centric</h3>
+                    <p style="color: var(--text-muted);">Your data is yours. Most of our tools run entirely in your browser (Client-Side), meaning your files never leave your device.</p>
+                </div>
+                <div class="value-card">
+                    <span class="value-icon">💎</span>
+                    <h3>Always Free</h3>
+                    <p style="color: var(--text-muted);">Productivity shouldn't be a luxury. We are committed to keeping our core tools free and accessible to users worldwide.</p>
+                </div>
+            </div>
+
+            <section style="max-width: 800px; margin: 0 auto; text-align: center;" class="fade-in" style="animation-delay: 0.2s;">
+                <h2 style="margin-bottom: 1.5rem;">Our Tech Stack</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                    QuickNova is built using modern web technologies to ensure performance and reliability.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <span class="status-badge" style="font-size: 1rem; padding: 0.5rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle);">HTML5</span>
+                    <span class="status-badge" style="font-size: 1rem; padding: 0.5rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle);">CSS3</span>
+                    <span class="status-badge" style="font-size: 1rem; padding: 0.5rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle);">Vanilla JS</span>
+                    <span class="status-badge" style="font-size: 1rem; padding: 0.5rem 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle);">PWA</span>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="/" class="logo" style="font-size: 1.5rem; margin-bottom: 1rem; display: block;">QuickNova</a>
+                    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">
+                        Your all-in-one toolbox for everyday digital tasks. 
+                        Free, secure, and always available.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Popular Tools</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/tools/image-to-pdf.html">Image to PDF</a></li>
+                        <li><a href="/tools/qr-code-generator.html">QR Code Generator</a></li>
+                        <li><a href="/tools/password-generator.html">Password Generator</a></li>
+                        <li><a href="/tools/pdf-to-word.html">PDF to Word</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/privacy.html">Privacy Policy</a></li>
+                        <li><a href="/terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align:center;border-top:1px solid var(--border-subtle);padding-top:2rem;color:var(--text-muted);font-size:0.9rem;">
+                &copy; 2024 QuickNova. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

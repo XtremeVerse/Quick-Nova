@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarizer - QuickNova</title>
+    <meta name="description" content="Summarize long texts instantly. Free online tool.">
+    <meta name="keywords" content="text summarizer, summarize text, summary generator, ai summarizer">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/text-summarizer.html">
+    <meta property="og:title" content="Text Summarizer - QuickNova">
+    <meta property="og:description" content="Summarize long texts instantly. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/text-summarizer.html">
+    <meta property="twitter:title" content="Text Summarizer - QuickNova">
+    <meta property="twitter:description" content="Summarize long texts instantly. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/text-summarizer.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .tool-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            min-height: 600px;
+        }
+
+        /* Sidebar Controls */
+        .controls-sidebar {
+            background: var(--bg-elevated);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: fit-content;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Segmented Controls for Options */
+        .segmented-control {
+            display: flex;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .segmented-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .segmented-btn.active {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+        
+        [data-theme="dark"] .segmented-btn.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg);
+            color: var(--text-main);
+        }
+
+        /* Main Workspace */
+        .workspace-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-card, .output-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .card-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-elevated);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--bg);
+            color: var(--text-main);
+            border-color: var(--accent-blue);
+        }
+
+        textarea.editor {
+            width: 100%;
+            height: 100%;
+            min-height: 250px;
+            padding: 1.5rem;
+            border: none;
+            background: var(--bg);
+            color: var(--text-main);
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+            outline: none;
+        }
+        
+        textarea.editor:focus {
+            background: var(--bg-elevated);
+        }
+
+        .char-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            text-align: right;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--bg-elevated);
+        }
+
+        /* History */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .history-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .history-preview {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 900px) {
+            .tool-container {
+                grid-template-columns: 1fr;
+            }
+            .controls-sidebar {
+                order: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <h1>Text Summarizer</h1>
+                <p>Distill long articles, documents, and text into concise, actionable summaries.</p>
+            </div>
+
+            <div class="tool-container">
+                <!-- Sidebar Controls -->
+                <aside class="controls-sidebar">
+                    <div class="control-group">
+                        <label>Summary Length</label>
+                        <div class="segmented-control">
+                            <button class="segmented-btn" data-length="short">Short</button>
+                            <button class="segmented-btn active" data-length="medium">Medium</button>
+                            <button class="segmented-btn" data-length="long">Long</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Format</label>
+                        <div class="segmented-control">
+                            <button class="segmented-btn active" data-format="paragraph">Paragraph</button>
+                            <button class="segmented-btn" data-format="bullets">Bullets</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Focus</label>
+                        <select id="focus-select" class="setting-select">
+                            <option value="general">General Overview</option>
+                            <option value="key_points">Key Points Extraction</option>
+                            <option value="action_items">Action Items / To-Dos</option>
+                            <option value="simplified">Simplify Language (ELI5)</option>
+                        </select>
+                    </div>
+
+                    <button id="summarize-btn" class="btn btn-primary btn-lg">
+                        Summarize Text
+                    </button>
+
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                            <label style="margin:0;">Recent Summaries</label>
+                            <button id="clear-history-btn" style="background:none; border:none; color:var(--text-muted); font-size:0.8rem; cursor:pointer;">Clear</button>
+                        </div>
+                        <div id="history-list" class="history-list">
+                            <!-- Items go here -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Workspace -->
+                <div class="workspace-area">
+                    <!-- Input -->
+                    <div class="input-card">
+                        <div class="card-header">
+                            <span class="card-title">📝 Original Text</span>
+                            <div class="card-actions">
+                                <button class="action-btn" id="paste-btn" title="Paste from Clipboard">📋</button>
+                                <button class="action-btn" id="clear-text-btn" title="Clear Text">🗑️</button>
+                            </div>
+                        </div>
+                        <textarea id="text-input" class="editor" placeholder="Paste your article, document, or long text here to summarize..."></textarea>
+                        <div class="char-count" id="input-count">0 characters</div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="output-card">
+                        <div class="card-header">
+                            <span class="card-title">✨ Summary</span>
+                            <div class="card-actions">
+                                <button class="action-btn" id="copy-btn" title="Copy to Clipboard">📋</button>
+                                <button class="action-btn" id="download-btn" title="Download as .txt">⬇️</button>
+                            </div>
+                        </div>
+                        <textarea id="summary-output" class="editor" readonly placeholder="Your summary will appear here..."></textarea>
+                        <div class="char-count" id="output-count">0 words</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-info" style="margin-top: 3rem;">
+                <h2>Tips for Best Results</h2>
+                <div class="tips-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                    <div class="tip-card" style="background: var(--bg-elevated); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <h3 style="color: var(--accent-blue); margin-bottom: 0.5rem;">Choose the Right Focus</h3>
+                        <p>Use "Action Items" for meeting notes, or "Key Points" for study materials.</p>
+                    </div>
+                    <div class="tip-card" style="background: var(--bg-elevated); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <h3 style="color: var(--accent-blue); margin-bottom: 0.5rem;">Check Length</h3>
+                        <p>If the summary misses details, try switching length to "Long" or "Medium".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/text-summarizer.js"></script>
+</body>
+</html>

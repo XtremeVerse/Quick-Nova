@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Cutter - QuickNova</title>
+    <meta name="description" content="Trim and cut MP3 audio files. Free online tool.">
+    <meta name="keywords" content="mp3 cutter, audio trimmer, cut audio, trim mp3">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/mp3-cutter.html">
+    <meta property="og:title" content="MP3 Cutter - QuickNova">
+    <meta property="og:description" content="Trim and cut MP3 audio files. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/mp3-cutter.html">
+    <meta property="twitter:title" content="MP3 Cutter - QuickNova">
+    <meta property="twitter:description" content="Trim and cut MP3 audio files. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/mp3-cutter.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Audio / Video</span>
+                <h1 style="margin-top: 1rem;">MP3 Cutter</h1>
+                <p style="color: var(--text-muted);">Trim and cut MP3 audio files.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✂️</div>
+                        <h3>Click to Upload Audio</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop (MP3, WAV, OGG)</p>
+                        <input type="file" id="file-input" accept="audio/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Audio File</button>
+                    </div>
+
+                    <div id="editor-container" style="display: none; margin-top: 2rem;">
+                        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-subtle); margin-bottom: 2rem;">
+                            <h4 id="filename-display" style="margin-bottom: 1rem; color: var(--text-muted);">audio.mp3</h4>
+                            
+                            <!-- Waveform -->
+                            <div id="waveform" style="width: 100%; margin-bottom: 1rem;"></div>
+                            
+                            <!-- Timeline/Controls -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button id="play-pause-btn" class="btn btn-secondary" style="width: 50px; padding: 0.5rem;">▶</button>
+                                    <button id="zoom-in" class="btn btn-outline" style="padding: 0.5rem;">+</button>
+                                    <button id="zoom-out" class="btn btn-outline" style="padding: 0.5rem;">-</button>
+                                </div>
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <div>
+                                        <label style="font-size: 0.8rem; display: block; color: var(--text-muted);">Start Time</label>
+                                        <input type="number" id="start-time" step="0.1" min="0" value="0" class="form-control" style="width: 80px; padding: 0.3rem;">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.8rem; display: block; color: var(--text-muted);">End Time</label>
+                                        <input type="number" id="end-time" step="0.1" min="0" value="0" class="form-control" style="width: 80px; padding: 0.3rem;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="status-container" style="display: none; margin-bottom: 1rem;">
+                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span id="status-text">Processing...</span>
+                                <span id="progress-text">0%</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden;">
+                                <div id="progress-bar" style="width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+
+                        <div class="actions" style="display: flex; gap: 1rem; justify-content: center;">
+                            <button id="cut-btn" class="btn btn-primary">Trim & Download</button>
+                            <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/mp3-cutter.js"></script>
+</body>
+</html>

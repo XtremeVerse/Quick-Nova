@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Rewriter - QuickNova</title>
+    <meta name="description" content="Rewrite text to improve clarity, style, and tone. Free AI paraphrasing tool.">
+    <meta name="keywords" content="text rewriter, article rewriter, paraphrase tool, ai writer, grammar fixer">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/text-rewriter.html">
+    <meta property="og:title" content="Text Rewriter - QuickNova">
+    <meta property="og:description" content="Rewrite text to improve clarity and style. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/text-rewriter.html">
+    <meta property="twitter:title" content="Text Rewriter - QuickNova">
+    <meta property="twitter:description" content="Rewrite text to improve clarity and style. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/text-rewriter.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .controls-sidebar {
+            background: var(--bg-elevated);
+            border-right: 1px solid var(--border-subtle);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .workspace {
+            padding: 2rem;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 1rem;
+            overflow-y: auto;
+            background: var(--bg-subtle);
+        }
+
+        .editor-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            height: 100%;
+            min-height: 500px;
+        }
+
+        .editor-panel {
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-elevated);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .panel-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .panel-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-main);
+        }
+
+        textarea {
+            flex: 1;
+            width: 100%;
+            border: none;
+            padding: 1rem;
+            resize: none;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        .stats-bar {
+            padding: 0.5rem 1rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-elevated);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg);
+            color: var(--text-main);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .history-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary);
+            background: var(--bg-hover);
+        }
+
+        .history-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-preview {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+            .editor-split {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            textarea {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Sidebar Controls -->
+        <aside class="controls-sidebar">
+            <div class="tool-header-mini">
+                <h2 style="font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    ✍️ Text Rewriter
+                </h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Refine and paraphrase text.</p>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Rewrite Goal</label>
+                <select id="goal-select" class="setting-select">
+                    <option value="improve">✨ Improve Fluency</option>
+                    <option value="paraphrase">🔄 Paraphrase / Reword</option>
+                    <option value="shorten">📉 Shorten / Summarize</option>
+                    <option value="expand">📈 Expand / Elaborate</option>
+                    <option value="simplify">👶 Simplify (ELI5)</option>
+                    <option value="fix">🛠️ Fix Grammar Only</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Tone</label>
+                <select id="tone-select" class="setting-select">
+                    <option value="professional">👔 Professional</option>
+                    <option value="casual">😊 Casual</option>
+                    <option value="academic">🎓 Academic</option>
+                    <option value="creative">🎨 Creative</option>
+                    <option value="confident">🦁 Confident</option>
+                    <option value="friendly">🤝 Friendly</option>
+                </select>
+            </div>
+
+            <button id="rewrite-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                Rewrite Text
+            </button>
+
+            <hr style="border-color: var(--border-subtle); margin: 0.5rem 0;">
+
+            <div class="control-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="control-label">Recent Rewrites</label>
+                    <button id="clear-history-btn" class="panel-btn" title="Clear History">🗑️</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- History items will be populated here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <section class="workspace">
+            <div class="editor-split">
+                <!-- Input Panel -->
+                <div class="editor-panel">
+                    <div class="panel-header">
+                        <span>Original Text</span>
+                        <div class="panel-actions">
+                            <button id="paste-btn" class="panel-btn" title="Paste from Clipboard">📋 Paste</button>
+                            <button id="clear-text-btn" class="panel-btn" title="Clear Text">✖️ Clear</button>
+                        </div>
+                    </div>
+                    <textarea id="text-input" placeholder="Enter or paste text here to rewrite..."></textarea>
+                    <div class="stats-bar">
+                        <span id="input-stats">0 chars | 0 words</span>
+                    </div>
+                </div>
+
+                <!-- Output Panel -->
+                <div class="editor-panel">
+                    <div class="panel-header">
+                        <span>Rewritten Text</span>
+                        <div class="panel-actions">
+                            <button id="copy-btn" class="panel-btn" title="Copy to Clipboard">📋 Copy</button>
+                        </div>
+                    </div>
+                    <textarea id="rewrite-output" readonly placeholder="Result will appear here..."></textarea>
+                    <div class="stats-bar">
+                        <span id="output-stats">0 chars | 0 words</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/tools/text-rewriter.js"></script>
+</body>
+</html>

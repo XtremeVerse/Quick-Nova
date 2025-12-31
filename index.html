@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNova - Tools That Make Life Faster</title>
+    <meta name="description" content="30+ free online tools for everyday productivity. AI, Image, PDF, Utility, and Audio/Video tools. No sign-up required.">
+    <meta name="keywords" content="online tools, free tools, pdf tools, ai tools, image editor, productivity tools, quicknova, format converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/">
+    <meta property="og:title" content="QuickNova - Tools That Make Life Faster">
+    <meta property="og:description" content="30+ free online tools for everyday productivity. AI, Image, PDF, Utility, and Audio/Video tools.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/">
+    <meta property="twitter:title" content="QuickNova - Tools That Make Life Faster">
+    <meta property="twitter:description" content="30+ free online tools for everyday productivity. AI, Image, PDF, Utility, and Audio/Video tools.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+                <button id="install-app-btn" class="btn btn-sm" style="margin-left:0.5rem; display:none;">Install App</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero fade-in">
+                <h1>QuickNova — Tools That Make Life <span id="typing-text" style="color:var(--accent-blue); border-bottom:3px solid var(--accent-blue)">Faster</span>.</h1>
+                <p>30+ free online tools for everyday productivity. No sign-up required.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 3rem;">
+                    <a href="#tools-section" class="btn btn-primary">Browse All Tools</a>
+                    <a href="/tools/ai-chat.html" class="btn btn-secondary">Start with AI Chat</a>
+                </div>
+                
+                <!-- In-content Ad Block -->
+                <div class="ad-slot ad-header">
+                    <span>Advertisement</span>
+                </div>
+            </section>
+
+            <!-- Tool Discovery Section -->
+            <section id="tools-section" class="fade-in" style="animation-delay: 0.1s;">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-tools" class="search-input" placeholder="Search tools (Press Ctrl + K)...">
+                </div>
+
+                <div class="category-filters">
+                    <button class="filter-chip active" data-category="all">All Tools</button>
+                    <button class="filter-chip" data-category="ai">AI Tools</button>
+                    <button class="filter-chip" data-category="image">Image Tools</button>
+                    <button class="filter-chip" data-category="pdf">PDF Tools</button>
+                    <button class="filter-chip" data-category="utility">Utility Tools</button>
+                    <button class="filter-chip" data-category="audio-video">Audio/Video</button>
+                </div>
+
+                <div id="tools-grid" class="tools-grid">
+                    <!-- Tools will be injected here by JS -->
+                </div>
+            </section>
+
+            <!-- Supporting Section -->
+            <section style="margin-top: 5rem; text-align: center;" class="fade-in" style="animation-delay: 0.2s;">
+                <h2 style="margin-bottom: 2rem;">Why QuickNova?</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                    <div class="tool-card">
+                        <div class="tool-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p style="color: var(--text-muted);">Optimized for speed. Tools load instantly and process files quickly.</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔒</div>
+                        <h3>Secure & Private</h3>
+                        <p style="color: var(--text-muted);">All processing happens in your browser. Your files never leave your device.</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📱</div>
+                        <h3>Mobile Friendly</h3>
+                        <p style="color: var(--text-muted);">Responsive design that works perfectly on phones, tablets, and desktops.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="/" class="logo" style="font-size: 1.5rem; margin-bottom: 1rem; display: block;">QuickNova</a>
+                    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">
+                        Your all-in-one toolbox for everyday digital tasks. 
+                        Free, secure, and always available.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Popular Tools</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/tools/image-to-pdf.html">Image to PDF</a></li>
+                        <li><a href="/tools/qr-code-generator.html">QR Code Generator</a></li>
+                        <li><a href="/tools/password-generator.html">Password Generator</a></li>
+                        <li><a href="/tools/pdf-to-word.html">PDF to Word</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/privacy.html">Privacy Policy</a></li>
+                        <li><a href="/terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align:center;border-top:1px solid var(--border-subtle);padding-top:2rem;color:var(--text-muted);font-size:0.9rem;">
+                &copy; 2024 QuickNova. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/tools-data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

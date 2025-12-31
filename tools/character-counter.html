@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Counter - QuickNova</title>
+    <meta name="description" content="Count characters with social media limits (Twitter, Instagram, etc.). Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility Tool</span>
+                <h1 style="margin-top: 1rem;">Character Counter</h1>
+                <p style="color: var(--text-muted);">Count characters with social media & SEO limits.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="input-area">
+                    <textarea id="text-input" class="text-area" placeholder="Type or paste your text here..." style="min-height: 200px; width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg);"></textarea>
+                </div>
+
+                <div class="output-area" style="margin-top: 2rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <!-- Basic Counts -->
+                        <div class="glass" style="padding: 1.5rem; border-radius: 12px;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Basic Stats</h3>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted);">Characters (with spaces)</span>
+                                <span style="font-weight: 700;" id="char-count">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted);">Characters (no spaces)</span>
+                                <span style="font-weight: 700;" id="char-no-space-count">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-muted);">Words</span>
+                                <span style="font-weight: 700;" id="word-count">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Social Limits -->
+                        <div class="glass" style="padding: 1.5rem; border-radius: 12px;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Social Media Limits</h3>
+                            
+                            <div class="limit-item" style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                                    <span>Twitter / X Post (280)</span>
+                                    <span id="twitter-count">0 / 280</span>
+                                </div>
+                                <div class="progress-bar" style="height: 6px; background: var(--bg-elevated); border-radius: 3px; overflow: hidden;">
+                                    <div id="twitter-bar" style="height: 100%; width: 0%; background: var(--accent-blue); transition: width 0.3s, background 0.3s;"></div>
+                                </div>
+                            </div>
+
+                            <div class="limit-item" style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                                    <span>Instagram Bio (150)</span>
+                                    <span id="insta-count">0 / 150</span>
+                                </div>
+                                <div class="progress-bar" style="height: 6px; background: var(--bg-elevated); border-radius: 3px; overflow: hidden;">
+                                    <div id="insta-bar" style="height: 100%; width: 0%; background: var(--accent-purple); transition: width 0.3s, background 0.3s;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="limit-item">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                                    <span>Google SEO Title (60)</span>
+                                    <span id="seo-count">0 / 60</span>
+                                </div>
+                                <div class="progress-bar" style="height: 6px; background: var(--bg-elevated); border-radius: 3px; overflow: hidden;">
+                                    <div id="seo-bar" style="height: 100%; width: 0%; background: var(--success); transition: width 0.3s, background 0.3s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                        <button class="btn btn-secondary" id="copy-btn">Copy Text</button>
+                        <button class="btn btn-secondary" id="clear-btn" style="color: var(--error);">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <h2>About Character Counter</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                    This tool helps you count characters and words in your text. It also provides progress bars for common social media and SEO limits, helping you craft the perfect post or title.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/character-counter.js"></script>
+</body>
+</html>

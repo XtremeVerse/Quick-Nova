@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - QuickNova</title>
+    <meta name="description" content="Chat with an intelligent AI assistant. Free online AI chat tool.">
+    <meta name="keywords" content="ai chat, artificial intelligence, chatbot, gpt, free ai">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/ai-chat.html">
+    <meta property="og:title" content="AI Chat - QuickNova">
+    <meta property="og:description" content="Chat with an intelligent AI assistant. Free online AI chat tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/ai-chat.html">
+    <meta property="twitter:title" content="AI Chat - QuickNova">
+    <meta property="twitter:description" content="Chat with an intelligent AI assistant. Free online AI chat tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/ai-chat.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .tool-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .chat-sidebar {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1rem;
+            position: sticky;
+            top: 88px;
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .setting-select {
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg);
+            color: var(--text-main);
+        }
+        .chat-container {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            background: var(--bg-elevated);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            background: linear-gradient(180deg, rgba(0,0,0,0.04), transparent);
+        }
+        .message {
+            max-width: 780px;
+            padding: 1rem 1.25rem;
+            border-radius: 14px;
+            line-height: 1.5;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-columns: 36px 1fr;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(90deg, #0070f3, #7928ca);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .message.ai {
+            align-self: flex-start;
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+        }
+        .message .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+        }
+        .message.user .avatar {
+            background: rgba(255,255,255,0.2);
+            border-color: transparent;
+        }
+        .chat-topbar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .persona-chip {
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .persona-chip.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--bg);
+            display: flex;
+            gap: 1rem;
+        }
+        .chat-input-wrapper textarea {
+            flex-grow: 1;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            min-height: 80px;
+            resize: vertical;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .chat-input-wrapper textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #00dfd8, #ff0080);
+            border: none;
+            min-width: 48px;
+            border-radius: 12px;
+        }
+        .chat-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .quick-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-top: 1px dashed var(--border-subtle);
+            border-bottom: 1px dashed var(--border-subtle);
+            background: var(--bg);
+        }
+        .quick-chip {
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .quick-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-main);
+        }
+        @media (max-width: 900px) {
+            .tool-container {
+                grid-template-columns: 1fr;
+            }
+            .chat-sidebar {
+                position: static;
+                order: 2;
+            }
+            .chat-main {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <h1>AI Assistant</h1>
+                <p>Your professional, intelligent companion for coding, writing, and analysis.</p>
+            </div>
+
+            <div class="tool-container">
+                <!-- Sidebar -->
+                <aside class="chat-sidebar">
+                    <div class="sidebar-header">
+                        <span>Settings</span>
+                        <button id="toggle-sidebar-mobile" class="btn-icon" style="display:none;">✕</button>
+                    </div>
+                    <div class="sidebar-content">
+                        <button id="new-chat-btn" class="new-chat-btn">+ New Chat</button>
+                        
+                        <div class="setting-group">
+                            <label>Persona / Mode</label>
+                            <select id="persona-select" class="setting-select">
+                                <option value="default">Helpful Assistant</option>
+                                <option value="coder">Senior Developer</option>
+                                <option value="writer">Creative Writer</option>
+                                <option value="teacher">Tutor / Teacher</option>
+                                <option value="analyst">Data Analyst</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>AI Model</label>
+                            <select id="model-select" class="setting-select">
+                                <option value="openai">GPT-4o (Compatible)</option>
+                                <option value="mistral">Mistral Large</option>
+                                <option value="llama">Llama 3</option>
+                                <option value="qwen">Qwen 2.5</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-group" style="margin-top: auto;">
+                            <button id="clear-history-btn" class="btn btn-outline btn-sm" style="width:100%">Clear History</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Chat Area -->
+                <div class="chat-main">
+                    <div class="chat-topbar">
+                        <button class="persona-chip" data-persona-chip="default">Assistant</button>
+                        <button class="persona-chip" data-persona-chip="coder">Coder</button>
+                        <button class="persona-chip" data-persona-chip="writer">Writer</button>
+                        <button class="persona-chip" data-persona-chip="teacher">Teacher</button>
+                        <button class="persona-chip" data-persona-chip="analyst">Analyst</button>
+                        <div class="chat-actions">
+                            <select id="model-quick" class="setting-select" style="height:32px;">
+                                <option value="openai">GPT-4o</option>
+                                <option value="mistral">Mistral</option>
+                                <option value="llama">Llama 3</option>
+                                <option value="qwen">Qwen 2.5</option>
+                            </select>
+                            <button id="new-chat-quick" class="btn btn-outline btn-sm">New</button>
+                            <button id="clear-history-quick" class="btn btn-outline btn-sm">Clear</button>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will appear here -->
+                        <div class="message ai">
+                            <div class="avatar">🤖</div>
+                            <div class="message-content">
+                                <p>Hello! I'm QuickNova AI. How can I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quick-bar" id="quick-bar">
+                        <button class="quick-chip" data-prompt="Summarize this: ">Summarize</button>
+                        <button class="quick-chip" data-prompt="Explain the following clearly: ">Explain</button>
+                        <button class="quick-chip" data-prompt="Fix grammar and improve clarity: ">Fix Grammar</button>
+                        <button class="quick-chip" data-prompt="Translate to English: ">Translate</button>
+                        <button class="quick-chip" data-prompt="Draft a professional email about: ">Write Email</button>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <button id="mobile-menu-btn" class="btn-icon" style="display:none; margin-right: 0.5rem;">☰</button>
+                        <div class="chat-input-wrapper">
+                            <textarea id="user-input" placeholder="Type your message here... (Enter to send, Shift+Enter for new line)"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="send-btn">➤</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-info" style="margin-top: 2rem;">
+                <h2>About this Tool</h2>
+                <p>This enhanced AI chat tool allows you to switch between different personas and models to best suit your needs. Whether you need code debugging, creative writing, or learning assistance, QuickNova AI is here to help.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/ai-chat.js"></script>
+</body>
+</html>

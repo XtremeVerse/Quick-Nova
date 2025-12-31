@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - QuickNova</title>
+    <meta name="description" content="Generate free QR codes instantly. Create QR codes for URLs, text, email, and more.">
+    <meta name="keywords" content="qr code generator, create qr code, free qr code, qr code maker, wifi qr code">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/qr-code-generator.html">
+    <meta property="og:title" content="QR Code Generator - QuickNova">
+    <meta property="og:description" content="Generate free QR codes instantly. Create QR codes for URLs, text, email, and more.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/qr-code-generator.html">
+    <meta property="twitter:title" content="QR Code Generator - QuickNova">
+    <meta property="twitter:description" content="Generate free QR codes instantly. Create QR codes for URLs, text, email, and more.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/qr-code-generator.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html" class="active">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility</span>
+                <h1 style="margin-top: 1rem;">QR Code Generator</h1>
+                <p style="color: var(--text-muted);">Create custom QR codes instantly.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                    <div class="input-area">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Content</label>
+                        <input type="text" id="qr-text" placeholder="https://example.com" style="width: 100%; padding: 1rem; border-radius: 8px; background: var(--bg); border: 1px solid var(--border-subtle); margin-bottom: 1rem;">
+                        
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Size</label>
+                        <input type="range" id="qr-size" min="100" max="400" value="200" style="width: 100%; margin-bottom: 1rem;">
+                        
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Color</label>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="color" id="qr-color" value="#000000" style="height: 40px; border-radius: 4px; cursor: pointer;">
+                            <input type="color" id="qr-bg" value="#ffffff" style="height: 40px; border-radius: 4px; cursor: pointer;">
+                        </div>
+
+                        <button id="generate-btn" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Generate QR Code</button>
+                    </div>
+                    
+                    <div class="output-area" style="text-align: center;">
+                        <div id="qr-code" style="background: white; padding: 1rem; display: inline-block; border-radius: 8px; box-shadow: var(--shadow-soft);"></div>
+                        <div style="margin-top: 1rem;">
+                            <button id="download-btn" class="btn btn-secondary">Download PNG</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h2>How to use</h2>
+                <ol style="padding-left: 1.5rem; margin-bottom: 2rem; color: var(--text-muted);">
+                    <li>Enter the URL or text you want to encode.</li>
+                    <li>Adjust the size and colors if needed.</li>
+                    <li>Click "Generate" to create your QR code.</li>
+                    <li>Download the image to use it.</li>
+                </ol>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/qr-code-generator.js"></script>
+</body>
+</html>

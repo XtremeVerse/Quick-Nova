@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - QuickNova</title>
+    <meta name="description" content="Free online word and character counter. Count words, characters, sentences, and paragraphs instantly.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility</span>
+                <h1 style="margin-top: 1rem;">Word Counter</h1>
+                <p style="color: var(--text-muted);">Count words, characters, and sentences in real-time.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="input-area">
+                    <textarea id="text-input" placeholder="Type or paste your text here..."></textarea>
+                </div>
+                
+                <div class="output-area">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                        <div class="glass" style="padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--accent-blue);" id="word-count">0</div>
+                            <div style="color: var(--text-muted);">Words</div>
+                        </div>
+                        <div class="glass" style="padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--accent-purple);" id="char-count">0</div>
+                            <div style="color: var(--text-muted);">Characters</div>
+                        </div>
+                        <div class="glass" style="padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="sentence-count">0</div>
+                            <div style="color: var(--text-muted);">Sentences</div>
+                        </div>
+                        <div class="glass" style="padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="paragraph-count">0</div>
+                            <div style="color: var(--text-muted);">Paragraphs</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                    <button class="btn btn-secondary" id="copy-btn">Copy Text</button>
+                    <button class="btn btn-secondary" id="clear-btn" style="color: var(--error);">Clear</button>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h2>How to use</h2>
+                <ol style="padding-left: 1.5rem; margin-bottom: 2rem; color: var(--text-muted);">
+                    <li>Type or paste your text into the box above.</li>
+                    <li>The counters will update automatically as you type.</li>
+                    <li>Use the "Copy" button to copy your text or "Clear" to start over.</li>
+                </ol>
+
+                <h2>Features</h2>
+                <ul style="padding-left: 1.5rem; margin-bottom: 2rem; color: var(--text-muted);">
+                    <li>Real-time counting</li>
+                    <li>Counts words, characters, sentences, and paragraphs</li>
+                    <li>Works offline in your browser</li>
+                    <li>Privacy-friendly (text is not sent to any server)</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/word-counter.js"></script>
+</body>
+</html>

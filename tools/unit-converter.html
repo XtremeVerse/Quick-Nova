@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - QuickNova</title>
+    <meta name="description" content="Convert between different units (Length, Weight, Temperature, Data). Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility Tool</span>
+                <h1 style="margin-top: 1rem;">Unit Converter</h1>
+                <p style="color: var(--text-muted);">Convert length, weight, temperature, and more.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem; border-radius: 12px; max-width: 800px; margin: 0 auto;">
+                    
+                    <!-- Category Selection -->
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Category</label>
+                        <div class="category-tabs" id="category-tabs" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-secondary active" data-category="length">Length</button>
+                            <button class="btn btn-secondary" data-category="weight">Weight</button>
+                            <button class="btn btn-secondary" data-category="temperature">Temperature</button>
+                            <button class="btn btn-secondary" data-category="data">Data</button>
+                            <button class="btn btn-secondary" data-category="time">Time</button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        <!-- From Section -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">From</label>
+                            <input type="number" id="from-value" value="1" style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg); margin-bottom: 1rem; font-size: 1.1rem;">
+                            <select id="from-unit" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-elevated);">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Swap Button (Mobile friendly adjustment needed in CSS usually, but simple flex/grid here) -->
+                        <div style="display: flex; align-items: center; justify-content: center; padding-top: 2.5rem; display: none;"> 
+                            <button class="btn btn-secondary btn-icon">⇄</button>
+                        </div>
+
+                        <!-- To Section -->
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">To</label>
+                            <input type="number" id="to-value" readonly style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-elevated); margin-bottom: 1rem; font-size: 1.1rem; cursor: not-allowed;">
+                            <select id="to-unit" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-elevated);">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: right;">
+                         <div id="formula-display" style="color: var(--text-muted); font-size: 0.9rem;"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/unit-converter.js"></script>
+</body>
+</html>

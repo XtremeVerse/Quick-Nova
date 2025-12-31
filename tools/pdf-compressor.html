@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Compressor - QuickNova</title>
+    <meta name="description" content="Reduce PDF file size. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Pdf Tool</span>
+                <h1 style="margin-top: 1rem;">PDF Compressor</h1>
+                <p style="color: var(--text-muted);">Reduce PDF file size.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🗜️</div>
+                        <h3>Click to Upload PDF</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop PDF file here</p>
+                        <input type="file" id="file-input" accept=".pdf" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select PDF</button>
+                    </div>
+
+                    <div id="file-info" style="margin-top: 2rem; display: none; padding: 1rem; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span id="file-name" style="font-weight: 600;">document.pdf</span>
+                            <span id="file-size" style="color: var(--text-muted);">0 MB</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                            Note: Client-side compression is limited. This will optimize the PDF structure and remove unused objects.
+                        </p>
+                        <button id="compress-btn" class="btn btn-primary" style="width: 100%;">Optimize PDF</button>
+                    </div>
+
+                    <div id="result-area" style="margin-top: 2rem; display: none; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎉</div>
+                        <h3>Optimization Complete!</h3>
+                        <p id="compression-stats" style="color: var(--accent-green); font-weight: 500; margin-bottom: 1rem;"></p>
+                        <button id="download-btn" class="btn btn-primary">Download Optimized PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/pdf-compressor.js"></script>
+</body>
+</html>

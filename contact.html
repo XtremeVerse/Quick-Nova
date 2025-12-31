@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - QuickNova</title>
+    <meta name="description" content="Get in touch with QuickNova team. Feedback, support, or just to say hello.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .contact-container {
+            max-width: 600px;
+            margin: 4rem auto;
+            background: var(--bg-elevated);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+        .contact-info {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html" class="active">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="contact-container fade-in">
+                <h1 style="text-align: center; margin-bottom: 2rem;">Get in Touch</h1>
+                
+                <!-- Simple contact form that uses mailto for now since we have no backend -->
+                <form id="contact-form" onsubmit="event.preventDefault(); window.location.href = 'mailto:hello@quicknova.com?subject=Contact from ' + document.getElementById('name').value + '&body=' + document.getElementById('message').value;">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Name</label>
+                        <input type="text" id="name" class="form-input" placeholder="Your Name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="message">Message</label>
+                        <textarea id="message" class="form-input" rows="5" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+
+                <div class="contact-info">
+                    <p style="color: var(--text-muted); margin-bottom: 0.5rem;">Or email us directly at:</p>
+                    <a href="mailto:hello@quicknova.com" style="color: var(--accent-blue); font-weight: 600;">hello@quicknova.com</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="/" class="logo" style="font-size: 1.5rem; margin-bottom: 1rem; display: block;">QuickNova</a>
+                    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">
+                        Your all-in-one toolbox for everyday digital tasks. 
+                        Free, secure, and always available.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Popular Tools</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/tools/image-to-pdf.html">Image to PDF</a></li>
+                        <li><a href="/tools/qr-code-generator.html">QR Code Generator</a></li>
+                        <li><a href="/tools/password-generator.html">Password Generator</a></li>
+                        <li><a href="/tools/pdf-to-word.html">PDF to Word</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul style="list-style:none;padding:0;">
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/privacy.html">Privacy Policy</a></li>
+                        <li><a href="/terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align:center;border-top:1px solid var(--border-subtle);padding-top:2rem;color:var(--text-muted);font-size:0.9rem;">
+                &copy; 2024 QuickNova. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

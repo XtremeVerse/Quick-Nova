@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover - QuickNova</title>
+    <meta name="description" content="Remove image backgrounds automatically. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Image Tool</span>
+                <h1 style="margin-top: 1rem;">Background Remover</h1>
+                <p style="color: var(--text-muted);">Remove image backgrounds automatically.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🖼️</div>
+                        <h3>Click to Upload Image</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop (JPG, PNG)</p>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Image</button>
+                    </div>
+
+                    <div id="editor-container" style="display: none; margin-top: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                            <div style="text-align: center;">
+                                <h4>Original</h4>
+                                <div style="margin: 1rem 0; height: 300px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border-radius: 8px; overflow: hidden;">
+                                    <img id="original-preview" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <h4>Result</h4>
+                                <div style="margin: 1rem 0; height: 300px; display: flex; align-items: center; justify-content: center; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ib3BhY2l0eSI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjY2NjIiAvPjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjY2NjIiAvPjwvc3ZnPg=='); background-size: 20px 20px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-subtle); position: relative;">
+                                    <canvas id="result-canvas" style="max-width: 100%; max-height: 100%; object-fit: contain; display: none;"></canvas>
+                                    <div id="loading-spinner" style="display: none; flex-direction: column; align-items: center;">
+                                        <div class="spinner"></div>
+                                        <p id="loading-text" style="margin-top: 1rem; font-size: 0.9rem; color: var(--text);">Loading AI Model...</p>
+                                    </div>
+                                </div>
+                                <div id="brush-controls" style="display: none; margin-top: 1rem;">
+                                    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                                        <button id="erase-btn" class="btn btn-outline btn-sm">Erase Background</button>
+                                        <button id="restore-btn" class="btn btn-outline btn-sm">Restore Foreground</button>
+                                        <button id="reset-edits-btn" class="btn btn-ghost btn-sm">Reset Edits</button>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; justify-content: center; margin-top: 0.75rem;">
+                                        <span style="font-size: 0.9rem; color: var(--text-muted);">Brush Size</span>
+                                        <input type="range" id="brush-size" min="5" max="100" value="30" style="width: 200px;">
+                                        <span id="brush-size-value" style="font-weight: 600; color: var(--accent-blue);">30px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert" style="background: rgba(0, 112, 243, 0.1); border: 1px solid rgba(0, 112, 243, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 2rem; display: flex; align-items: start; gap: 1rem;">
+                            <span style="font-size: 1.2rem;">🤖</span>
+                            <div>
+                                <strong>AI Background Removal</strong>
+                                <p style="font-size: 0.9rem; margin-top: 0.2rem; color: var(--text-muted);">This tool uses a powerful AI model running directly in your browser. First time use may take a moment to download the model (~50MB).</p>
+                            </div>
+                        </div>
+
+                        <div style="max-width: 700px; margin: 0 auto 2rem; padding: 1rem; border: 1px solid var(--border-subtle); border-radius: 12px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <label style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Threshold</span>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span style="font-size: 0.85rem;">Low</span>
+                                        <input type="range" id="threshold-slider" min="0" max="100" value="50" style="flex: 1;">
+                                        <span style="font-size: 0.85rem;">High</span>
+                                    </div>
+                                    <div style="text-align: right; color: var(--accent-blue); font-weight: 600;">
+                                        <span id="threshold-value">50%</span>
+                                    </div>
+                                </label>
+                                <label style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Feather</span>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span style="font-size: 0.85rem;">0px</span>
+                                        <input type="range" id="feather-slider" min="0" max="20" value="4" style="flex: 1;">
+                                        <span style="font-size: 0.85rem;">20px</span>
+                                    </div>
+                                    <div style="text-align: right; color: var(--accent-blue); font-weight: 600;">
+                                        <span id="feather-value">4px</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="actions" style="display: flex; gap: 1rem; justify-content: center;">
+                            <button id="process-btn" class="btn btn-primary">Remove Background</button>
+                            <button id="download-btn" class="btn btn-secondary" disabled>Download Result</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script type="module" src="../js/tools/background-remover.js"></script>
+</body>
+</html>

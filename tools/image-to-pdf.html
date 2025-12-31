@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF - QuickNova</title>
+    <meta name="description" content="Convert images to PDF documents. Free online tool.">
+    <meta name="keywords" content="image to pdf, jpg to pdf, png to pdf, photos to pdf, free pdf converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/image-to-pdf.html">
+    <meta property="og:title" content="Image to PDF - QuickNova">
+    <meta property="og:description" content="Convert images to PDF documents. Free online tool.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/image-to-pdf.html">
+    <meta property="twitter:title" content="Image to PDF - QuickNova">
+    <meta property="twitter:description" content="Convert images to PDF documents. Free online tool.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/image-to-pdf.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Image Tool</span>
+                <h1 style="margin-top: 1rem;">Image to PDF</h1>
+                <p style="color: var(--text-muted);">Convert images to PDF documents.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🖼️</div>
+                        <h3>Click to Upload Images</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop files here</p>
+                        <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/jpg" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Images</button>
+                    </div>
+
+                    <div id="preview-area" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 2rem;">
+                        <!-- Preview items will be added here -->
+                    </div>
+                    <div style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Tip: Drag images in the preview to reorder before export.</div>
+
+                    <div id="controls" style="margin-top: 2rem; display: none; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+                        <div style="min-width: 200px;">
+                            <span id="file-count" style="font-weight: 600;">0 images selected</span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <label style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Page Size</span>
+                                <select id="page-size" class="input">
+                                    <option value="a4">A4</option>
+                                    <option value="letter">Letter</option>
+                                </select>
+                            </label>
+                            <label style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Orientation</span>
+                                <select id="orientation" class="input">
+                                    <option value="portrait">Portrait</option>
+                                    <option value="landscape">Landscape</option>
+                                </select>
+                            </label>
+                            <label style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Margins</span>
+                                <select id="margin" class="input">
+                                    <option value="0">None</option>
+                                    <option value="5">Small</option>
+                                    <option value="10" selected>Medium</option>
+                                    <option value="20">Large</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button id="convert-btn" class="btn btn-primary">Convert to PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/image-to-pdf.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+:root {
+    /* Colors - Light Mode */
+    --bg: #f8f9fa;
+    --bg-elevated: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --border-subtle: #e2e8f0;
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    /* Neon Accents */
+    --accent-blue: #0070f3; /* Darker blue for light mode visibility */
+    --accent-purple: #7928ca; /* Darker purple for light mode visibility */
+    --accent-glow: 0 0 10px rgba(0, 112, 243, 0.3);
+    
+    /* Functional */
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+}
+
+[data-theme="dark"] {
+    /* Colors - Dark Mode */
+    --bg: #0f172a;
+    --bg-elevated: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-subtle: #334155;
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    
+    /* Neon Accents - Brighter for dark mode */
+    --accent-blue: #00f3ff;
+    --accent-purple: #bd00ff;
+    --accent-glow: 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+/* Glassmorphism */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .glass {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}

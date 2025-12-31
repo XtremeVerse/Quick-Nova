@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tools - QuickNova</title>
+    <meta name="description" content="Browse our complete collection of 30+ free online productivity tools.">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/tools/" class="active">Tools</a>
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+                <button id="install-app-btn" class="btn btn-sm" style="margin-left:0.5rem; display:none;">Install App</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h1>All QuickNova Tools</h1>
+                <p style="color: var(--text-muted);">Explore our complete suite of productivity utilities.</p>
+            </div>
+
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-tools" class="search-input" placeholder="Search tools...">
+            </div>
+
+            <div class="category-filters">
+                <button class="filter-chip active" data-category="all">All Tools</button>
+                <button class="filter-chip" data-category="ai">AI Tools</button>
+                <button class="filter-chip" data-category="image">Image Tools</button>
+                <button class="filter-chip" data-category="pdf">PDF Tools</button>
+                <button class="filter-chip" data-category="utility">Utility Tools</button>
+                <button class="filter-chip" data-category="audio-video">Audio/Video</button>
+                <button class="filter-chip" data-category="favorites">Favorites</button>
+            </div>
+
+            <div id="tools-grid" class="tools-grid">
+                <!-- Tools will be injected here by JS -->
+            </div>
+            
+            <div class="ad-slot ad-footer" style="margin-top: 3rem;">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>QuickNova</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Your one-stop destination for everyday productivity tools.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="/tools/?category=ai">AI Tools</a></li>
+                        <li><a href="/tools/?category=image">Image Tools</a></li>
+                        <li><a href="/tools/?category=pdf">PDF Tools</a></li>
+                        <li><a href="/tools/?category=utility">Utilities</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/tools-data.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html>

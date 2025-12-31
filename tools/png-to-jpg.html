@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG to JPG Converter - QuickNova</title>
+    <meta name="description" content="Convert PNG images to JPG format online. Batch conversion, quality control, and transparent background handling.">
+    <meta name="keywords" content="png to jpg, convert png to jpg, image converter, batch image converter, free online converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/tools/png-to-jpg.html">
+    <meta property="og:title" content="PNG to JPG Converter - QuickNova">
+    <meta property="og:description" content="Convert PNG images to JPG format online. Free & fast.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/tools/png-to-jpg.html">
+    <meta property="twitter:title" content="PNG to JPG Converter - QuickNova">
+    <meta property="twitter:description" content="Convert PNG images to JPG format online. Free & fast.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    
+    <link rel="canonical" href="https://quicknova.com/tools/png-to-jpg.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .controls-sidebar {
+            background: var(--bg-elevated);
+            border-right: 1px solid var(--border-subtle);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .workspace {
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .dropzone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            background: var(--bg);
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            min-height: 200px;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary);
+            background: var(--bg-hover);
+        }
+
+        .dropzone-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .file-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .file-card {
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .file-preview {
+            width: 100%;
+            height: 150px;
+            background: var(--bg-subtle);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .file-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-meta {
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="range"] {
+            flex: 1;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border-subtle);
+            cursor: pointer;
+        }
+
+        .color-option.active {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .batch-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+            .batch-actions {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            .workspace {
+                padding-bottom: 80px;
+            }
+        }
+    </style>
+    <!-- JSZip for Zip Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Sidebar Controls -->
+        <aside class="controls-sidebar">
+            <div class="tool-header-mini">
+                <h2 style="font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🖼️ PNG to JPG
+                </h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Convert images instantly.</p>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">JPG Quality: <span id="quality-value">90%</span></label>
+                <div class="range-container">
+                    <input type="range" id="quality-slider" min="10" max="100" value="90">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Fill Transparent Background</label>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">JPG doesn't support transparency.</p>
+                <div class="color-options">
+                    <div class="color-option active" style="background: white;" data-color="#FFFFFF" title="White"></div>
+                    <div class="color-option" style="background: black;" data-color="#000000" title="Black"></div>
+                    <div class="color-option" style="background: transparent; border: 2px dashed var(--text-muted);" data-color="#FFFFFF" title="White (Default)"></div>
+                    <input type="color" id="custom-color" style="width: 30px; height: 30px; padding: 0; border: none; cursor: pointer;">
+                </div>
+            </div>
+
+            <hr style="border-color: var(--border-subtle);">
+            
+            <div class="control-group">
+                <button id="convert-all-btn" class="btn btn-primary" style="width: 100%;" disabled>
+                    Convert All
+                </button>
+                <button id="download-all-btn" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;" disabled>
+                    Download All (ZIP)
+                </button>
+                <button id="clear-all-btn" class="btn btn-danger" style="width: 100%; margin-top: 0.5rem;" disabled>
+                    Clear All
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <section class="workspace">
+            <!-- Dropzone -->
+            <div id="dropzone" class="dropzone">
+                <div class="dropzone-icon">📂</div>
+                <h3>Drag & Drop PNG files here</h3>
+                <p style="color: var(--text-muted);">or click to browse files</p>
+                <input type="file" id="file-input" accept="image/png" multiple style="display: none;">
+            </div>
+
+            <!-- File List -->
+            <div id="file-list" class="file-list">
+                <!-- File cards will be added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/tools/png-to-jpg.js"></script>
+</body>
+</html>

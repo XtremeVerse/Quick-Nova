@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter - QuickNova</title>
+    <meta name="description" content="Format, validate, and minify JSON data online. Free developer tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .code-editor {
+            font-family: monospace;
+            white-space: pre;
+            tab-size: 4;
+        }
+        .error-msg {
+            color: var(--error);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Utility</span>
+                <h1 style="margin-top: 1rem;">JSON Formatter</h1>
+                <p style="color: var(--text-muted);">Beautify and validate your JSON data.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <button id="format-btn" class="btn btn-primary">Format / Beautify</button>
+                    <button id="minify-btn" class="btn btn-secondary">Minify</button>
+                    <button id="clear-btn" class="btn btn-secondary" style="margin-left: auto;">Clear</button>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="json-input" class="code-editor" placeholder="Paste your JSON here..." style="min-height: 400px;"></textarea>
+                    <div id="error-msg" class="error-msg">Invalid JSON</div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end;">
+                    <button id="copy-btn" class="btn btn-secondary">Copy to Clipboard</button>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/json-formatter.js"></script>
+</body>
+</html>

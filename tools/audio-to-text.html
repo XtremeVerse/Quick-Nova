@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to Text - QuickNova</title>
+    <meta name="description" content="Convert speech to text instantly using Web Speech API. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Audio / Video</span>
+                <h1 style="margin-top: 1rem;">Audio to Text</h1>
+                <p style="color: var(--text-muted);">Transcribe speech to text in real-time.</p>
+            </div>
+
+            <div class="tool-workspace">
+                
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <button id="mic-btn" class="btn btn-primary" style="border-radius: 50%; width: 80px; height: 80px; font-size: 2rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);">
+                        🎙️
+                    </button>
+                    <p id="status-text" style="margin-top: 1rem; color: var(--text-muted);">Click microphone to start speaking</p>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="transcript" class="text-area" placeholder="Your speech will appear here..." readonly style="min-height: 300px; width: 100%; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg); font-family: 'Inter', sans-serif; font-size: 1.1rem; line-height: 1.6;"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                    <button class="btn btn-secondary" id="copy-btn">Copy Text</button>
+                    <button class="btn btn-secondary" id="clear-btn" style="color: var(--error);">Clear</button>
+                </div>
+
+                <div class="glass" style="margin-top: 2rem; padding: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    <strong>Note:</strong> This tool uses your browser's Web Speech API. It works best in Google Chrome, Edge, and Safari. Your audio is processed locally or securely by your browser vendor, not stored on our servers.
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/audio-to-text.js"></script>
+</body>
+</html>

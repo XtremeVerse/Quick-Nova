@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator - QuickNova</title>
+    <meta name="description" content="Create custom memes easily. Free online tool.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="tool-header">
+                <span class="tool-badge">Image Tool</span>
+                <h1 style="margin-top: 1rem;">Meme Generator</h1>
+                <p style="color: var(--text-muted);">Create custom memes easily.</p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="glass" style="padding: 2rem;">
+                    <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border-subtle); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">😂</div>
+                        <h3>Click to Upload Image</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">or drag and drop (JPG, PNG)</p>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Select Meme Template</button>
+                    </div>
+
+                    <div id="editor-container" style="display: none; margin-top: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+                            <!-- Canvas Preview -->
+                            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); text-align: center;">
+                                <canvas id="meme-canvas" style="max-width: 100%; height: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas>
+                            </div>
+
+                            <!-- Controls -->
+                            <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                                <h3 style="margin-bottom: 1.5rem;">Edit Meme</h3>
+                                
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Top Text</label>
+                                    <input type="text" id="top-text" class="form-control" placeholder="TOP TEXT" style="width: 100%; padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-input); color: var(--text);">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Bottom Text</label>
+                                    <input type="text" id="bottom-text" class="form-control" placeholder="BOTTOM TEXT" style="width: 100%; padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-input); color: var(--text);">
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Font Size (px)</label>
+                                        <input type="number" id="font-size" value="40" min="10" max="100" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-input); color: var(--text);">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Text Color</label>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <input type="color" id="text-color" value="#ffffff" style="width: 100%; height: 38px; border: none; border-radius: 4px; cursor: pointer;">
+                                            <input type="color" id="stroke-color" value="#000000" style="width: 100%; height: 38px; border: none; border-radius: 4px; cursor: pointer;" title="Outline Color">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="actions" style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <button id="download-btn" class="btn btn-primary" style="width: 100%;">Download Meme</button>
+                                    <button id="reset-btn" class="btn btn-secondary" style="width: 100%;">Upload New Image</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ad-slot ad-content">
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/tools/meme-generator.js"></script>
+</body>
+</html>

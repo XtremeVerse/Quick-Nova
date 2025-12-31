@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - QuickNova</title>
+    <meta name="description" content="Your QuickNova dashboard: favorites, recent tools, and daily streak.">
+    <meta name="keywords" content="dashboard, favorites, recent tools, productivity, streak">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quicknova.com/dashboard.html">
+    <meta property="og:title" content="Dashboard - QuickNova">
+    <meta property="og:description" content="Your QuickNova dashboard: favorites, recent tools, and daily streak.">
+    <meta property="og:image" content="https://quicknova.com/assets/og-image.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quicknova.com/dashboard.html">
+    <meta property="twitter:title" content="Dashboard - QuickNova">
+    <meta property="twitter:description" content="Your QuickNova dashboard: favorites, recent tools, and daily streak.">
+    <meta property="twitter:image" content="https://quicknova.com/assets/og-image.jpg">
+    <link rel="canonical" href="https://quicknova.com/dashboard.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">QuickNova</a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/tools/">Tools</a>
+                <a href="/dashboard.html" class="active">Dashboard</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <button class="theme-toggle" aria-label="Toggle Theme">🌙</button>
+                <button id="install-app-btn" class="btn btn-sm" style="margin-left:0.5rem; display:none;">Install App</button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display:grid;gap:2rem;">
+                <div class="glass" style="padding:1.5rem;border-radius:12px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h1 style="margin:0 0 0.25rem 0;">Your Dashboard</h1>
+                        <p style="color:var(--text-muted);">Jump back into your favorites and recent tools.</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <div id="streak-count" style="font-size:1.8rem;font-weight:800;">0</div>
+                        <div style="color:var(--text-muted);">Day streak</div>
+                    </div>
+                </div>
+
+                <section>
+                    <h2 style="margin-bottom:1rem;">Favorites</h2>
+                    <div id="favorites-grid" class="tools-grid"></div>
+                    <div id="favorites-empty" style="display:none;color:var(--text-muted);">No favorites yet. Browse tools and tap ☆ to save.</div>
+                    <div style="margin-top:1rem;display:flex;gap:0.5rem;">
+                        <button id="remind-btn" class="btn btn-secondary btn-sm">Remind Me Tomorrow</button>
+                        <button id="notify-btn" class="btn btn-sm">Enable Notifications</button>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 style="margin-bottom:1rem;">Recently Used</h2>
+                    <div id="recent-grid" class="tools-grid"></div>
+                    <div id="recent-empty" style="display:none;color:var(--text-muted);">No recent tools yet.</div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/tools-data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+    function readJSON(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}}
+    function cardHTML(t){return '<a href="'+t.link+'" class="tool-card" data-category="'+t.category+'"><div class="tool-badge">'+t.category.replace(/(^|-)\\w/g,m=>m.toUpperCase())+'</div><div class="tool-icon">'+t.icon+'</div><h3 class="tool-title">'+t.name+'</h3><p class="tool-desc">'+t.desc+'</p><div class="btn btn-secondary btn-sm">Open Tool</div></a>'}
+    (function(){
+        var streak=localStorage.getItem('qn_streak')||'1';
+        var sEl=document.getElementById('streak-count');
+        if(sEl) sEl.textContent=streak;
+        var favIds=readJSON('qn_favorites');
+        var favGrid=document.getElementById('favorites-grid');
+        var favEmpty=document.getElementById('favorites-empty');
+        if(favIds.length===0){favEmpty.style.display='block'} else {
+            var favTools=toolsData.filter(t=>favIds.includes(t.id));
+            favGrid.innerHTML=favTools.map(cardHTML).join('')
+        }
+        var recentIds=readJSON('qn_recent');
+        var recentGrid=document.getElementById('recent-grid');
+        var recentEmpty=document.getElementById('recent-empty');
+        if(recentIds.length===0){recentEmpty.style.display='block'} else {
+            var recentTools=recentIds.map(id=>toolsData.find(t=>t.id===id)).filter(Boolean);
+            recentGrid.innerHTML=recentTools.map(cardHTML).join('')
+        }
+        var rbtn=document.getElementById('remind-btn');
+        if(rbtn){
+            rbtn.addEventListener('click',function(){
+                var d=new Date();
+                d.setDate(d.getDate()+1);
+                d.setHours(9,0,0,0);
+                var pad=function(n){return (n<10?'0':'')+n};
+                var dt=d.getUTCFullYear()+''+pad(d.getUTCMonth()+1)+''+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z';
+                var ics='BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//QuickNova//EN\nBEGIN:VEVENT\nUID:'+Date.now()+'@quicknova\nDTSTAMP:'+dt+'\nDTSTART:'+dt+'\nSUMMARY:Use QuickNova\nDESCRIPTION:Return to QuickNova and continue your tools.\nEND:VEVENT\nEND:VCALENDAR';
+                downloadFile(ics,'quicknova-reminder.ics','text/calendar');
+            })
+        }
+        var nbtn=document.getElementById('notify-btn');
+        if(nbtn){
+            nbtn.addEventListener('click',async function(){
+                if(!('Notification' in window)) return;
+                const p=await Notification.requestPermission();
+                if(p==='granted'){localStorage.setItem('qn_notify','1');showToast('Notifications enabled','success')}
+            })
+        }
+        var enabled=localStorage.getItem('qn_notify')==='1';
+        if(enabled && 'Notification' in window && Notification.permission==='granted'){
+            var last=localStorage.getItem('qn_lastNotify');
+            var today=new Date().toDateString();
+            if(last!==today){
+                new Notification('QuickNova',{body:'Your tools are ready'});
+                localStorage.setItem('qn_lastNotify',today);
+            }
+        }
+    })()
+    </script>
+</body>
+</html>
