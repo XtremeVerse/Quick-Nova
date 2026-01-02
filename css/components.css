@@ -91,6 +91,7 @@
     color: var(--text-muted);
     margin-bottom: 1.5rem;
     flex-grow: 1;
+}
 .tool-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -124,11 +125,7 @@
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning);
     border: 1px solid rgba(245, 158, 11, 0.2);
-}   padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    background: var(--bg);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-muted);
+}
 }
 
 /* Hero Section */
@@ -294,4 +291,46 @@
 
 @media (max-width: 768px) {
     .hero h1 { font-size: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+    .btn {
+        min-height: 44px;
+        font-size: 1rem;
+    }
+    .tool-workspace {
+        padding: 1.25rem;
+    }
+    .file-upload-zone {
+        padding: 2rem;
+    }
+    .tools-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 3rem 0.75rem;
+    }
+    .tool-title {
+        font-size: 1.15rem;
+    }
+    .tool-desc {
+        font-size: 1rem;
+    }
+    .tools-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1rem;
+    }
+    .tool-workspace {
+        padding: 1rem;
+    }
+    .file-upload-zone {
+        padding: 1.5rem;
+    }
+    .search-input {
+        font-size: 1rem;
+    }
 }

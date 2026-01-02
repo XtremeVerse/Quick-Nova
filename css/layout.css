@@ -125,3 +125,18 @@
         padding: 0 1rem;
     }
 }
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .main-content {
+        padding: 1.25rem 0;
+    }
+    .site-header {
+        height: 64px;
+    }
+    .logo {
+        font-size: 1.35rem;
+    }
+}
