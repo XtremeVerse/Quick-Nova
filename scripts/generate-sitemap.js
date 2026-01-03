@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const toolsData = require('../js/tools-data.js');
 
-const BASE_URL = 'https://quicknova.com'; // Change this to the actual domain
+const BASE_URL = process.env.SITE_URL || 'https://quicknova.vercel.app';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const staticPages = [
@@ -11,6 +11,7 @@ const staticPages = [
     { url: '/contact.html', priority: '0.8', changefreq: 'monthly' },
     { url: '/terms.html', priority: '0.5', changefreq: 'yearly' },
     { url: '/privacy.html', priority: '0.5', changefreq: 'yearly' },
+    { url: '/verify.html', priority: '0.2', changefreq: 'monthly' },
 ];
 
 let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
