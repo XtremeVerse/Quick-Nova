@@ -5,4 +5,6 @@ self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promis
 self.addEventListener('fetch',e=>{
   const req=e.request;
   if(req.method!=='GET' || new URL(req.url).origin!==location.origin){return}
+  const url=new URL(req.url);
+  if(url.pathname==='/sitemap.xml' || url.pathname==='/robots.txt'){return}
   e.respondWith(caches.match(req).then(r=>r||fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE_NAME).then(c=>c.put(req,copy));return res})))});
