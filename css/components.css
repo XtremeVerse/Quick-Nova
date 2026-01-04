@@ -301,6 +301,10 @@
     .tool-workspace {
         padding: 1.25rem;
     }
+    .tool-workspace > div {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
     .file-upload-zone {
         padding: 2rem;
     }
@@ -326,6 +330,10 @@
     }
     .tool-workspace {
         padding: 1rem;
+    }
+    .tool-workspace > div {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
     }
     .file-upload-zone {
         padding: 1.5rem;
