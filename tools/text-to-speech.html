@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/components.css">
+    <style>
+        @media (max-width: 768px) {
+            .tts-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+        }
+    </style>
 </head>
 <body>
     <header class="site-header">
@@ -41,7 +46,7 @@
             </div>
 
             <div class="tool-workspace">
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+                <div class="tts-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
                     
                     <div class="input-area">
                         <textarea id="text-input" class="text-area" placeholder="Enter text here to speak..." style="min-height: 300px; width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg);"></textarea>

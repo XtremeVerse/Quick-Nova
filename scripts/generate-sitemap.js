@@ -2,48 +2,33 @@ const fs = require('fs');
 const path = require('path');
 const toolsData = require('../js/tools-data.js');
 
-const BASE_URL = process.env.SITE_URL || 'https://quicknova.vercel.app';
-const TODAY = new Date().toISOString().split('T')[0];
+const siteUrl = 'https://quicknova.vercel.app';
 
-const staticPages = [
-    { url: '/', priority: '1.0', changefreq: 'daily' },
-    { url: '/about.html', priority: '0.8', changefreq: 'monthly' },
-    { url: '/contact.html', priority: '0.8', changefreq: 'monthly' },
-    { url: '/terms.html', priority: '0.5', changefreq: 'yearly' },
-    { url: '/privacy.html', priority: '0.5', changefreq: 'yearly' },
-    { url: '/verify.html', priority: '0.2', changefreq: 'monthly' },
+const pages = [
+  '/',
+  '/tools/',
+  '/dashboard.html',
+  '/about.html',
+  '/contact.html',
 ];
 
-let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+const toolPaths = (toolsData || []).map(t => t.link);
+
+const urls = [...pages, ...toolPaths];
+
+const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url><loc>${siteUrl}${u}</loc></url>`).join('\n')}
+</urlset>
 `;
 
-// Add static pages
-staticPages.forEach(page => {
-    sitemap += `    <url>
-        <loc>${BASE_URL}${page.url}</loc>
-        <lastmod>${TODAY}</lastmod>
-        <changefreq>${page.changefreq}</changefreq>
-        <priority>${page.priority}</priority>
-    </url>
+fs.writeFileSync(path.join(__dirname, '../sitemap.xml'), xml);
+
+const robots = `User-agent: *
+Allow: /
+
+Sitemap: ${siteUrl}/sitemap.xml
 `;
-});
+fs.writeFileSync(path.join(__dirname, '../robots.txt'), robots);
 
-// Add tool pages
-toolsData.forEach(tool => {
-    sitemap += `    <url>
-        <loc>${BASE_URL}${tool.link}</loc>
-        <lastmod>${TODAY}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.9</priority>
-    </url>
-`;
-});
-
-sitemap += '</urlset>';
-
-const sitemapPath = path.join(__dirname, '../sitemap.xml');
-fs.writeFileSync(sitemapPath, sitemap);
-
-console.log(`Sitemap generated successfully at ${sitemapPath}`);
-console.log(`Total URLs: ${staticPages.length + toolsData.length}`);
+console.log('Sitemap and robots.txt generated');

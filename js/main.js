@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initPWA();
     initSmartNudge();
     initTypingEffect();
+    initShareUI();
+    initToolSchema();
+    initTrending();
+    initInvite();
+    initHomeShareNudge();
 });
 
 function initAnalytics() {
@@ -25,71 +30,212 @@ function initAnalytics() {
 }
 
 function initAds() {
+    // Ensure an in-tool ad slot exists on tool pages
+    if (window.location.pathname.includes('/tools/')) {
+        const contentSlot = document.querySelector('.ad-slot.ad-content');
+        if (!contentSlot) {
+            const workspace = document.querySelector('.tool-workspace');
+            const container = workspace || document.querySelector('.tool-container');
+            if (container) {
+                const ad = document.createElement('div');
+                ad.className = 'ad-slot ad-content';
+                ad.innerHTML = '<span>Advertisement</span>';
+                container.appendChild(ad);
+            }
+        }
+    }
+    class SmartAds {
+        constructor() {
+            this.max = 5;
+            this.views = parseInt(sessionStorage.getItem('qn_ad_views') || '0');
+            this.optOut = localStorage.getItem('qn_ads_optout') === '1';
+            this.engaged = false;
+            const e = () => { this.engaged = true; };
+            window.addEventListener('click', e, { once: true, capture: true });
+            window.addEventListener('scroll', () => {
+                if (this.engaged) return;
+                if (window.scrollY > 200) this.engaged = true;
+            }, { passive: true });
+            this.debug = false;
+            this.debugUI = null;
+        }
+        canLoad() {
+            if (this.optOut) return false;
+            if (this.views >= this.max) return false;
+            return true;
+        }
+        inc() {
+            this.views += 1;
+            sessionStorage.setItem('qn_ad_views', String(this.views));
+        }
+        report(type, status, message) {
+            try { if (window.gtag) gtag('event', 'ad_'+status.toLowerCase(), { ad_type: type, detail: message || '' }); } catch(_) {}
+            if (!this.debugUI) return;
+            const line = document.createElement('div');
+            line.textContent = type + ' • ' + status + (message ? (' • ' + message) : '');
+            this.debugUI.appendChild(line);
+        }
+        createScript(src, onload, onerror) {
+            const s = document.createElement('script');
+            s.src = src;
+            s.async = true;
+            s.onload = onload;
+            s.onerror = onerror;
+            return s;
+        }
+        load(type, slot) {
+            if (!this.canLoad()) return;
+            if (type === 'BANNER') {
+                if (!slot) return;
+                this.inc();
+                const setup = document.createElement('script');
+                setup.type = 'text/javascript';
+                setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
+                const src = this.createScript(
+                    'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js',
+                    () => this.report('BANNER', 'Loaded'),
+                    () => this.report('BANNER', 'Error')
+                );
+                slot.innerHTML = '';
+                slot.appendChild(setup);
+                slot.appendChild(src);
+                return;
+            }
+            if (type === 'NATIVE') {
+                if (!slot) return;
+                this.inc();
+                const div = document.createElement('div');
+                div.id = 'container-b03554437e27c7af7c3e026651b104da';
+                slot.innerHTML = '';
+                slot.appendChild(div);
+                const s = this.createScript(
+                    'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
+                    () => this.report('NATIVE', 'Loaded'),
+                    () => this.report('NATIVE', 'Error')
+                );
+                s.setAttribute('data-cfasync', 'false');
+                slot.appendChild(s);
+                return;
+            }
+            if (type === 'POPUNDER') {
+                this.inc();
+                const s = this.createScript(
+                    'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js',
+                    () => this.report('POPUNDER', 'Loaded'),
+                    () => this.report('POPUNDER', 'Error')
+                );
+                document.body.appendChild(s);
+                return;
+            }
+            if (type === 'SOCIAL') {
+                if (localStorage.getItem('qn_ad_socialbar') === '1') return;
+                this.inc();
+                const s = this.createScript(
+                    'https://pl28401272.effectivegatecpm.com/51/1c/44/511c447359e25338ff26c7f09b965585.js',
+                    () => this.report('SOCIAL', 'Loaded'),
+                    () => this.report('SOCIAL', 'Error')
+                );
+                document.body.appendChild(s);
+                localStorage.setItem('qn_ad_socialbar', '1');
+                return;
+            }
+            if (type === 'SMARTLINK') {
+                this.inc();
+                window.open('https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41', '_blank');
+                this.report('SMARTLINK', 'Opened');
+                return;
+            }
+        }
+    }
     const isMobile = window.innerWidth <= 768;
     const headerSlot = document.querySelector('.ad-slot.ad-header');
     const contentSlot = document.querySelector('.ad-slot.ad-content');
     const footerSlot = document.querySelector('.ad-slot.ad-footer');
-    if (headerSlot && !isMobile) {
-        const setup = document.createElement('script');
-        setup.type = 'text/javascript';
-        setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
-        const src = document.createElement('script');
-        src.src = 'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js';
-        headerSlot.innerHTML = '';
-        headerSlot.appendChild(setup);
-        headerSlot.appendChild(src);
+    const ads = new SmartAds();
+    const optToggle = document.getElementById('ads-optout');
+    const offersBtn = document.getElementById('offers-btn');
+    const debug = new URLSearchParams(location.search).get('ads') === 'debug';
+    if (debug) {
+        ads.optOut = false;
+        ads.debug = true;
+        const panel = document.createElement('div');
+        panel.style.position = 'fixed';
+        panel.style.bottom = '10px';
+        panel.style.right = '10px';
+        panel.style.zIndex = '9999';
+        panel.style.background = 'var(--bg-elevated)';
+        panel.style.border = '1px solid var(--border-subtle)';
+        panel.style.borderRadius = '8px';
+        panel.style.boxShadow = 'var(--shadow-soft)';
+        panel.style.padding = '0.75rem';
+        panel.style.fontSize = '0.85rem';
+        panel.style.maxWidth = '280px';
+        panel.innerHTML = '<div style="font-weight:700;margin-bottom:0.5rem;">Ads Debug</div>';
+        const actions = document.createElement('div');
+        actions.style.display = 'flex';
+        actions.style.gap = '0.5rem';
+        const btnPU = document.createElement('button');
+        btnPU.className = 'btn btn-sm';
+        btnPU.textContent = 'Trigger Popunder';
+        btnPU.onclick = () => ads.load('POPUNDER');
+        const btnNative = document.createElement('button');
+        btnNative.className = 'btn btn-sm';
+        btnNative.textContent = 'Load Native';
+        btnNative.onclick = () => { if (contentSlot) ads.load('NATIVE', contentSlot); };
+        actions.appendChild(btnPU);
+        actions.appendChild(btnNative);
+        panel.appendChild(actions);
+        const log = document.createElement('div');
+        log.style.marginTop = '0.5rem';
+        log.style.maxHeight = '160px';
+        log.style.overflow = 'auto';
+        ads.debugUI = log;
+        panel.appendChild(log);
+        document.body.appendChild(panel);
+        if (headerSlot && !isMobile) ads.load('BANNER', headerSlot);
+        if (contentSlot) ads.load('NATIVE', contentSlot);
+        ads.load('SOCIAL');
     }
-    if (contentSlot) {
-        const nativeContainer = document.createElement('div');
-        nativeContainer.id = 'container-b03554437e27c7af7c3e026651b104da';
-        contentSlot.innerHTML = '';
-        contentSlot.appendChild(nativeContainer);
-        const nativeScript = document.createElement('script');
-        nativeScript.async = true;
-        nativeScript.setAttribute('data-cfasync', 'false');
-        nativeScript.src = 'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js';
-        contentSlot.appendChild(nativeScript);
-    }
-    function oncePerDay(key) {
-        const d = new Date().toDateString();
-        const v = localStorage.getItem(key);
-        if (v === d) return false;
-        localStorage.setItem(key, d);
-        return true;
-    }
-    function loadSocialBar() {
-        if (localStorage.getItem('qn_ad_socialbar') === '1') return;
-        const sb = document.createElement('script');
-        sb.src = 'https://pl28401272.effectivegatecpm.com/51/1c/44/511c447359e25338ff26c7f09b965585.js';
-        document.body.appendChild(sb);
-        localStorage.setItem('qn_ad_socialbar', '1');
-    }
-    let scrolled = false;
-    window.addEventListener('scroll', () => {
-        if (scrolled) return;
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        const p = window.scrollY / Math.max(h, 1);
-        if (p > 0.5) {
-            scrolled = true;
-            setTimeout(loadSocialBar, 3000);
+    const applyOptOut = () => {
+        if (ads.optOut) {
+            document.querySelectorAll('.ad-slot').forEach(el => { el.style.display = 'none'; });
         }
-    }, { passive: true });
-    setTimeout(() => {
-        if (!scrolled) loadSocialBar();
-    }, 20000);
-    function loadPopunder() {
-        if (!oncePerDay('qn_ad_popunder')) return;
-        const pu = document.createElement('script');
-        pu.src = 'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js';
-        document.body.appendChild(pu);
+    };
+    if (optToggle) {
+        optToggle.checked = ads.optOut;
+        optToggle.addEventListener('change', () => {
+            ads.optOut = optToggle.checked;
+            localStorage.setItem('qn_ads_optout', ads.optOut ? '1' : '0');
+            applyOptOut();
+        });
     }
+    applyOptOut();
+    // Faster initial ad visibility, with staged delays
+    // Desktop banner early
     setTimeout(() => {
-        const trigger = () => {
-            loadPopunder();
-            document.removeEventListener('click', trigger, true);
+        if (ads.optOut) return;
+        if (headerSlot && !isMobile) ads.load('BANNER', headerSlot);
+    }, 6000);
+    // Native content ad shortly after engagement or small timeout
+    setTimeout(() => {
+        if (ads.optOut) return;
+        if (ads.engaged || performance.now() > 12000) {
+            if (contentSlot) ads.load('NATIVE', contentSlot);
+        }
+    }, 12000);
+    // Social bar later
+    setTimeout(() => {
+        if (ads.optOut) return;
+        if (document.hasFocus()) ads.load('SOCIAL');
+    }, 25000);
+    // Popunder bound to first click, listener attached sooner
+    setTimeout(() => {
+        const t = () => {
+            if (!ads.optOut) ads.load('POPUNDER');
+            document.removeEventListener('click', t, true);
         };
-        document.addEventListener('click', trigger, true);
-    }, 8000);
+        document.addEventListener('click', t, true);
+    }, 4000);
     if (footerSlot) {
         const a = document.createElement('a');
         a.href = 'https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41';
@@ -97,6 +243,11 @@ function initAds() {
         a.style.color = 'var(--text-muted)';
         a.style.marginLeft = '0.5rem';
         footerSlot.appendChild(a);
+    }
+    if (offersBtn) {
+        offersBtn.addEventListener('click', () => {
+            if (!ads.optOut) ads.load('SMARTLINK');
+        });
     }
 }
 
@@ -242,6 +393,11 @@ function initSearchAndFilter() {
     const filterChips = document.querySelectorAll('.filter-chip');
     
     if (searchInput) {
+        const q = new URLSearchParams(window.location.search).get('q');
+        if (q) {
+            searchInput.value = q;
+            filterTools(q.toLowerCase(), getActiveCategory());
+        }
         // Keyboard shortcut (Ctrl/Cmd + K)
         document.addEventListener('keydown', (e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -429,6 +585,138 @@ function initTypingEffect() {
     setTimeout(type, 2000);
 }
 
+function initShareUI() {
+    if (!window.location.pathname.includes('/tools/')) return;
+    const header = document.querySelector('.tool-header');
+    if (!header) return;
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.gap = '0.5rem';
+    wrap.style.justifyContent = 'center';
+    wrap.style.marginTop = '0.75rem';
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'btn btn-secondary btn-sm';
+    shareBtn.textContent = 'Share';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-sm';
+    copyBtn.textContent = 'Copy Link';
+    const url = new URL(window.location.href);
+    url.searchParams.set('utm_source', 'share');
+    url.searchParams.set('utm_medium', 'button');
+    url.searchParams.set('utm_campaign', 'tools');
+    shareBtn.addEventListener('click', async () => {
+        const title = document.title;
+        const link = url.toString();
+        if (navigator.share) {
+            try {
+                await navigator.share({ title, url: link });
+                if (window.gtag) gtag('event', 'share', { method: 'navigator', page: window.location.pathname });
+                if (typeof showToast !== 'undefined') showToast('Thanks for sharing!', 'success');
+            } catch(e) {}
+        } else {
+            try {
+                await navigator.clipboard.writeText(link);
+                if (window.gtag) gtag('event', 'share', { method: 'copy_fallback', page: window.location.pathname });
+                if (typeof showToast !== 'undefined') showToast('Link copied to clipboard', 'info');
+            } catch(e) {}
+        }
+    });
+    copyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(url.toString());
+            if (window.gtag) gtag('event', 'copy_link', { page: window.location.pathname });
+            if (typeof showToast !== 'undefined') showToast('Link copied to clipboard', 'info');
+        } catch(e) {}
+    });
+    wrap.appendChild(shareBtn);
+    wrap.appendChild(copyBtn);
+    header.appendChild(wrap);
+}
+
+function initToolSchema() {
+    if (typeof toolsData === 'undefined') return;
+    const tool = toolsData.find(t => t.link === window.location.pathname);
+    if (!tool) return;
+    const s = document.createElement('script');
+    s.type = 'application/ld+json';
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": tool.name,
+        "applicationCategory": "Utilities",
+        "operatingSystem": "Web",
+        "url": window.location.origin + tool.link,
+        "description": tool.desc,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    };
+    s.text = JSON.stringify(schema);
+    document.head.appendChild(s);
+}
+
+function initTrending() {
+    const grid = document.getElementById('trending-tools');
+    if (!grid || typeof toolsData === 'undefined') return;
+    const picks = toolsData.filter(t => Array.isArray(t.badges) && (t.badges.includes('popular') || t.badges.includes('new'))).slice(0, 6);
+    grid.innerHTML = picks.map(t => {
+        const u = new URL(window.location.origin + t.link);
+        u.searchParams.set('utm_source', 'trending');
+        u.searchParams.set('utm_medium', 'grid');
+        u.searchParams.set('utm_campaign', 'homepage');
+        return `
+        <div class="tool-card fade-in">
+            <div class="tool-icon">${t.icon}</div>
+            <h3 class="tool-title">${t.name}</h3>
+            <p class="tool-desc">${t.desc}</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="${t.link}" class="btn btn-secondary btn-sm" style="flex:1">Open</a>
+                <button class="btn btn-sm" data-share="${u.toString()}">Share</button>
+            </div>
+        </div>`;
+    }).join('');
+    grid.querySelectorAll('button[data-share]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const link = btn.getAttribute('data-share');
+            if (navigator.share) {
+                try { await navigator.share({ title: document.title, url: link }); } catch(e) {}
+            } else {
+                try { await navigator.clipboard.writeText(link); } catch(e) {}
+            }
+            if (window.gtag) gtag('event', 'share', { method: navigator.share ? 'navigator' : 'copy', page: 'home' });
+        });
+    });
+}
+
+function initInvite() {
+    const btn = document.getElementById('invite-btn');
+    if (!btn) return;
+    const u = new URL(window.location.href);
+    u.searchParams.set('utm_source', 'invite');
+    u.searchParams.set('utm_medium', 'footer');
+    u.searchParams.set('utm_campaign', 'growth');
+    btn.addEventListener('click', async () => {
+        const link = u.toString();
+        if (navigator.share) {
+            try { await navigator.share({ title: 'QuickNova', url: link }); } catch(e) {}
+        } else {
+            try { await navigator.clipboard.writeText(link); } catch(e) {}
+        }
+        if (window.gtag) gtag('event', 'invite_share', { page: window.location.pathname });
+        if (typeof showToast !== 'undefined') showToast('Invite link ready to share', 'success');
+    });
+}
+
+function initHomeShareNudge() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
+    const key = 'qn_home_visits';
+    let v = parseInt(localStorage.getItem(key) || '0');
+    v += 1;
+    localStorage.setItem(key, String(v));
+    if (v === 2 || v === 5) {
+        setTimeout(() => {
+            if (typeof showToast !== 'undefined') showToast('Enjoying QuickNova? Share with a friend!', 'info');
+        }, 2000);
+    }
+}
 document.addEventListener('DOMContentLoaded', () => {
     const nav = document.querySelector('.nav-links');
     if (nav && !nav.querySelector('a[href="/tools/ai-chat.html"]')) {

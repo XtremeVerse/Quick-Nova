@@ -30,6 +30,19 @@
       gtag('js', new Date());
       gtag('config', 'G-88T5VL450S');
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://quicknova.vercel.app/",
+      "name": "QuickNova",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://quicknova.vercel.app/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
     <link rel="manifest" href="/manifest.json">
     <meta name="google-site-verification" content="WPx_UAz-UEG_1_Kcj6upaW9JUl9Rz93fcJ9JRgzcy-k">
     
@@ -120,6 +133,10 @@
                     </div>
                 </div>
             </section>
+            <section id="trending-section" class="fade-in" style="margin-top: 3rem;">
+                <h2 style="text-align:center;margin-bottom:1rem;">Trending Tools</h2>
+                <div id="trending-tools" class="tools-grid"></div>
+            </section>
         </div>
     </main>
 
@@ -151,6 +168,14 @@
                         <li><a href="/terms.html">Terms of Service</a></li>
                     </ul>
                 </div>
+            </div>
+            <div style="display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:1rem;">
+                <label style="display:flex;align-items:center;gap:0.5rem;color:var(--text-muted);font-size:0.9rem;">
+                    <input type="checkbox" id="ads-optout">
+                    Hide ads
+                </label>
+                <button id="offers-btn" class="btn btn-secondary btn-sm">Offers</button>
+                <button id="invite-btn" class="btn btn-primary btn-sm">Invite Friends</button>
             </div>
             <div style="text-align:center;border-top:1px solid var(--border-subtle);padding-top:2rem;color:var(--text-muted);font-size:0.9rem;">
                 &copy; 2024 QuickNova. All rights reserved.

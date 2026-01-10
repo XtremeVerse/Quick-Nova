@@ -224,6 +224,7 @@
     padding: 2rem;
     margin-bottom: 3rem;
     box-shadow: var(--shadow-soft);
+    overflow-x: hidden;
 }
 
 .input-area, .output-area {
@@ -300,6 +301,8 @@
     }
     .tool-workspace {
         padding: 1.25rem;
+        margin-left: auto;
+        margin-right: auto;
     }
     .tool-workspace > div {
         grid-template-columns: 1fr !important;
