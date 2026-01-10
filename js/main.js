@@ -210,32 +210,40 @@ function initAds() {
         });
     }
     applyOptOut();
-    // Faster initial ad visibility, with staged delays
-    // Desktop banner early
-    setTimeout(() => {
-        if (ads.optOut) return;
-        if (headerSlot && !isMobile) ads.load('BANNER', headerSlot);
-    }, 6000);
-    // Native content ad shortly after engagement or small timeout
-    setTimeout(() => {
-        if (ads.optOut) return;
-        if (ads.engaged || performance.now() > 12000) {
-            if (contentSlot) ads.load('NATIVE', contentSlot);
+    // INSTANT banner ads - load immediately
+    if (!ads.optOut && headerSlot && !isMobile) {
+        ads.load('BANNER', headerSlot);
+    }
+    // Additional banner slots for more revenue
+    if (!ads.optOut) {
+        // Create additional banner slots
+        const topBanner = document.createElement('div');
+        topBanner.className = 'ad-slot ad-banner-top';
+        topBanner.style.cssText = 'text-align:center;margin:10px 0;';
+        const firstContent = document.querySelector('.tool-workspace, .tool-container, main, .content');
+        if (firstContent) {
+            firstContent.parentNode.insertBefore(topBanner, firstContent);
+            ads.load('BANNER', topBanner);
         }
-    }, 12000);
-    // Social bar later
+    }
+    // SUPER FAST native ads - 3 seconds
+    setTimeout(() => {
+        if (ads.optOut) return;
+        if (contentSlot) ads.load('NATIVE', contentSlot);
+    }, 3000);
+    // SUPER FAST social bar - 5 seconds  
     setTimeout(() => {
         if (ads.optOut) return;
         if (document.hasFocus()) ads.load('SOCIAL');
-    }, 25000);
-    // Popunder bound to first click, listener attached sooner
+    }, 5000);
+    // INSTANT popunder on first click - 1 second
     setTimeout(() => {
         const t = () => {
             if (!ads.optOut) ads.load('POPUNDER');
             document.removeEventListener('click', t, true);
         };
         document.addEventListener('click', t, true);
-    }, 4000);
+    }, 1000);
     if (footerSlot) {
         const a = document.createElement('a');
         a.href = 'https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41';
@@ -249,6 +257,39 @@ function initAds() {
             if (!ads.optOut) ads.load('SMARTLINK');
         });
     }
+    
+    // Add MORE banner ads for higher revenue
+    if (!ads.optOut) {
+        // Sidebar banner for desktop
+        if (!isMobile) {
+            const sidebar = document.querySelector('.sidebar, .tool-sidebar, .aside');
+            if (sidebar) {
+                const sideBanner = document.createElement('div');
+                sideBanner.className = 'ad-slot ad-sidebar';
+                sideBanner.style.cssText = 'text-align:center;margin:20px 0;';
+                sidebar.appendChild(sideBanner);
+                ads.load('BANNER', sideBanner);
+            }
+        }
+        
+        // Between content sections
+        const sections = document.querySelectorAll('.tool-section, .content-section, .card');
+        if (sections.length >= 2) {
+            const midBanner = document.createElement('div');
+            midBanner.className = 'ad-slot ad-mid-content';
+            midBanner.style.cssText = 'text-align:center;margin:20px 0;';
+            sections[Math.floor(sections.length / 2)].parentNode.insertBefore(midBanner, sections[Math.floor(sections.length / 2)]);
+            ads.load('BANNER', midBanner);
+        }
+        
+        // Sticky bottom banner
+        const stickyBanner = document.createElement('div');
+        stickyBanner.className = 'ad-slot ad-sticky-bottom';
+        stickyBanner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;text-align:center;background:var(--bg-elevated);border-top:1px solid var(--border-subtle);padding:10px;z-index:1000;';
+        document.body.appendChild(stickyBanner);
+        ads.load('BANNER', stickyBanner);
+    }
+}
 }
 
 // --- Theme Handling ---
@@ -717,6 +758,89 @@ function initHomeShareNudge() {
         }, 2000);
     }
 }
+
+// NEW: WhatsApp/Telegram share shortcuts
+function initSocialShare() {
+    const shareContainer = document.createElement('div');
+    shareContainer.className = 'social-share-float';
+    shareContainer.style.cssText = 'position:fixed;right:20px;bottom:100px;z-index:999;display:flex;flex-direction:column;gap:10px;';
+    
+    const whatsappBtn = document.createElement('button');
+    whatsappBtn.innerHTML = '💬';
+    whatsappBtn.title = 'Share on WhatsApp';
+    whatsappBtn.style.cssText = 'width:50px;height:50px;border-radius:50%;background:#25D366;color:white;border:none;font-size:20px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.3);';
+    whatsappBtn.onclick = () => {
+        const url = encodeURIComponent(window.location.href + '?utm_source=whatsapp&utm_medium=share&utm_campaign=social');
+        window.open(`https://wa.me/?text=${url}`, '_blank');
+        gtag('event', 'share', { method: 'whatsapp' });
+    };
+    
+    const telegramBtn = document.createElement('button');
+    telegramBtn.innerHTML = '✈️';
+    telegramBtn.title = 'Share on Telegram';
+    telegramBtn.style.cssText = 'width:50px;height:50px;border-radius:50%;background:#0088cc;color:white;border:none;font-size:20px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.3);';
+    telegramBtn.onclick = () => {
+        const url = encodeURIComponent(window.location.href + '?utm_source=telegram&utm_medium=share&utm_campaign=social');
+        window.open(`https://t.me/share/url?url=${url}`, '_blank');
+        gtag('event', 'share', { method: 'telegram' });
+    };
+    
+    shareContainer.appendChild(whatsappBtn);
+    shareContainer.appendChild(telegramBtn);
+    document.body.appendChild(shareContainer);
+}
+
+// NEW: Top searches chips bar
+function initTopSearches() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
+    const topSearches = ['PDF', 'Image', 'AI', 'QR', 'Password', 'Text', 'Color', 'JSON'];
+    const container = document.createElement('div');
+    container.className = 'top-searches';
+    container.style.cssText = 'text-align:center;margin:20px 0;padding:15px;background:var(--bg-elevated);border-radius:8px;';
+    container.innerHTML = '<h3 style="margin-bottom:10px;">🔥 Popular Tools</h3>';
+    
+    const chips = document.createElement('div');
+    chips.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center;';
+    
+    topSearches.forEach(term => {
+        const chip = document.createElement('a');
+        chip.href = `/?q=${encodeURIComponent(term)}&utm_source=topsearches&utm_medium=chips&utm_campaign=homepage`;
+        chip.className = 'btn btn-sm';
+        chip.textContent = term;
+        chip.style.cssText = 'background:var(--primary);color:white;padding:8px 16px;border-radius:20px;text-decoration:none;font-size:14px;';
+        chips.appendChild(chip);
+    });
+    
+    container.appendChild(chips);
+    const hero = document.querySelector('.hero, .home-hero, main > section:first-child');
+    if (hero) hero.parentNode.insertBefore(container, hero.nextSibling);
+}
+
+// NEW: Email share with prefill
+function initEmailShare() {
+    const emailBtn = document.createElement('button');
+    emailBtn.innerHTML = '📧';
+    emailBtn.title = 'Share via Email';
+    emailBtn.style.cssText = 'width:50px;height:50px;border-radius:50%;background:#EA4335;color:white;border:none;font-size:20px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.3);';
+    emailBtn.onclick = () => {
+        const url = window.location.href + '?utm_source=email&utm_medium=share&utm_campaign=email';
+        const subject = encodeURIComponent('Check out this amazing tool!');
+        const body = encodeURIComponent(`Hey! I found this awesome tool that you might like: ${url}`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        gtag('event', 'share', { method: 'email' });
+    };
+    
+    const shareContainer = document.querySelector('.social-share-float');
+    if (shareContainer) shareContainer.appendChild(emailBtn);
+}
+
+// Initialize new growth features
+document.addEventListener('DOMContentLoaded', () => {
+    initSocialShare();
+    initTopSearches();
+    initEmailShare();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const nav = document.querySelector('.nav-links');
     if (nav && !nav.querySelector('a[href="/tools/ai-chat.html"]')) {
