@@ -454,11 +454,19 @@ function initSearchAndFilter() {
     const searchInput = document.getElementById('search-tools');
     const filterChips = document.querySelectorAll('.filter-chip');
     
+    // Initialize Fuse for fuzzy search
+    const fuseOptions = {
+        keys: ['name', 'desc'],
+        threshold: 0.4, // Lower threshold for more fuzzy matching
+        includeScore: true
+    };
+    const fuse = new Fuse(toolsData, fuseOptions);
+    
     if (searchInput) {
         const q = new URLSearchParams(window.location.search).get('q');
         if (q) {
             searchInput.value = q;
-            filterTools(q.toLowerCase(), getActiveCategory());
+            filterTools(q, getActiveCategory(), fuse);
         }
         // Keyboard shortcut (Ctrl/Cmd + K)
         document.addEventListener('keydown', (e) => {
@@ -472,8 +480,8 @@ function initSearchAndFilter() {
         });
 
         searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            filterTools(query, getActiveCategory());
+            const query = e.target.value;
+            filterTools(query, getActiveCategory(), fuse);
         });
     }
 
@@ -485,8 +493,8 @@ function initSearchAndFilter() {
                 chip.classList.add('active');
                 
                 const category = chip.getAttribute('data-category');
-                const query = searchInput ? searchInput.value.toLowerCase() : '';
-                filterTools(query, category);
+                const query = searchInput ? searchInput.value : '';
+                filterTools(query, category, fuse);
             });
         });
     }
@@ -497,7 +505,7 @@ function getActiveCategory() {
     return activeChip ? activeChip.getAttribute('data-category') : 'all';
 }
 
-function filterTools(query, category) {
+function filterTools(query, category, fuse) {
     if (typeof toolsData === 'undefined') return;
 
     let base = toolsData;
@@ -507,10 +515,19 @@ function filterTools(query, category) {
     } else if (category !== 'all') {
         base = toolsData.filter(t => t.category === category);
     }
-    const filtered = base.filter(tool => {
-        const matchesSearch = tool.name.toLowerCase().includes(query) || tool.desc.toLowerCase().includes(query);
-        return matchesSearch;
-    });
+    
+    let filtered;
+    if (query.trim() === '') {
+        filtered = base;
+    } else {
+        // Use Fuse for fuzzy search
+        const results = fuse.search(query);
+        // Filter results to only include items in base (after category filter)
+        const baseIds = new Set(base.map(t => t.id));
+        filtered = results
+            .filter(result => baseIds.has(result.item.id))
+            .map(result => result.item);
+    }
 
     renderTools(filtered);
 }
