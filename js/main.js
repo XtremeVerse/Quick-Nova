@@ -453,7 +453,6 @@ function formatCategory(cat) {
 function initSearchAndFilter() {
     const searchInput = document.getElementById('search-tools');
     const searchBtn = document.getElementById('search-btn');
-    const searchDropdown = document.getElementById('search-dropdown');
     const filterChips = document.querySelectorAll('.filter-chip');
     
     if (searchInput) {
@@ -472,30 +471,12 @@ function initSearchAndFilter() {
                 setTimeout(() => searchInput.style.borderColor = '', 300);
             }
         });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            if (query) {
-                showSearchDropdown(query);
-            } else {
-                hideSearchDropdown();
-            }
-            filterTools(query, getActiveCategory());
-        });
-
-        searchInput.addEventListener('focus', () => {
-            const query = searchInput.value.trim();
-            if (query) {
-                showSearchDropdown(query);
-            }
-        });
     }
 
     if (searchBtn) {
         searchBtn.addEventListener('click', () => {
-            const query = searchInput ? searchInput.value : '';
+            const query = searchInput ? searchInput.value.trim() : '';
             filterTools(query, getActiveCategory());
-            hideSearchDropdown();
         });
     }
 
@@ -507,7 +488,7 @@ function initSearchAndFilter() {
                 chip.classList.add('active');
                 
                 const category = chip.getAttribute('data-category');
-                const query = searchInput ? searchInput.value : '';
+                const query = searchInput ? searchInput.value.trim() : '';
                 filterTools(query, category);
             });
         });
@@ -542,49 +523,6 @@ function filterTools(query, category, fuse) {
     }
 
     renderTools(filtered);
-}
-
-function showSearchDropdown(query) {
-    const searchDropdown = document.getElementById('search-dropdown');
-    if (!searchDropdown) return;
-
-    // Simple filter for testing
-    const results = toolsData.filter(tool => 
-        tool.name.toLowerCase().includes(query.toLowerCase()) || 
-        tool.desc.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 5);
-
-    if (results.length === 0) {
-        searchDropdown.innerHTML = '<div class="search-dropdown-item">No results found</div>';
-        searchDropdown.style.display = 'block';
-        return;
-    }
-
-    searchDropdown.innerHTML = '';
-    results.forEach(tool => {
-        const item = document.createElement('div');
-        item.className = 'search-dropdown-item';
-        item.innerHTML = `
-            <div class="dropdown-icon">${tool.icon}</div>
-            <div class="dropdown-text">
-                <h4>${tool.name}</h4>
-                <p>${tool.desc}</p>
-            </div>
-        `;
-        item.addEventListener('click', () => {
-            window.location.href = tool.link;
-        });
-        searchDropdown.appendChild(item);
-    });
-
-    searchDropdown.style.display = 'block';
-}
-
-function hideSearchDropdown() {
-    const searchDropdown = document.getElementById('search-dropdown');
-    if (searchDropdown) {
-        searchDropdown.style.display = 'none';
-    }
 }
 
 function toggleFavorite(id) {
