@@ -839,6 +839,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initSocialShare();
     initTopSearches();
     initEmailShare();
+    initReferralSystem();
+    initExitIntentPopup();
+    initViralLoop();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
