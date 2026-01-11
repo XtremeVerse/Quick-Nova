@@ -498,11 +498,6 @@ function initSearchAndFilter() {
                 showSearchDropdown(query, fuse);
             }
         });
-
-        searchInput.addEventListener('blur', () => {
-            // Delay to allow clicks on dropdown
-            setTimeout(() => hideSearchDropdown(), 150);
-        });
     }
 
     if (searchBtn) {
@@ -571,16 +566,10 @@ function showSearchDropdown(query, fuse) {
     }
 
     searchDropdown.innerHTML = '';
-    results.forEach(result => {
+    results.slice(0, 5).forEach(result => {
         const item = document.createElement('div');
         item.className = 'search-dropdown-item';
-        item.innerHTML = `
-            <span class="dropdown-icon">${result.item.icon}</span>
-            <div class="dropdown-text">
-                <h4>${result.item.name}</h4>
-                <p>${result.item.desc}</p>
-            </div>
-        `;
+        item.textContent = result.item.name;
         item.addEventListener('click', () => {
             window.location.href = result.item.link;
         });
