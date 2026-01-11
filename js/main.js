@@ -559,19 +559,25 @@ function showSearchDropdown(query, fuse) {
     const searchDropdown = document.getElementById('search-dropdown');
     if (!searchDropdown) return;
 
-    const results = fuse.search(query);
+    // Simple filter for testing
+    const results = toolsData.filter(tool => 
+        tool.name.toLowerCase().includes(query.toLowerCase()) || 
+        tool.desc.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 5);
+
     if (results.length === 0) {
-        hideSearchDropdown();
+        searchDropdown.innerHTML = '<div class="search-dropdown-item">No results found</div>';
+        searchDropdown.style.display = 'block';
         return;
     }
 
     searchDropdown.innerHTML = '';
-    results.slice(0, 5).forEach(result => {
+    results.forEach(tool => {
         const item = document.createElement('div');
         item.className = 'search-dropdown-item';
-        item.textContent = result.item.name;
+        item.textContent = tool.name;
         item.addEventListener('click', () => {
-            window.location.href = result.item.link;
+            window.location.href = tool.link;
         });
         searchDropdown.appendChild(item);
     });
