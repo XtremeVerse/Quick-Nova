@@ -92,7 +92,7 @@
             </section>
 
             <!-- Tool Discovery Section -->
-            <section id="tools-section" class="fade-in" style="animation-delay: 0.1s;">
+            <section id="tools-section" style="animation-delay: 0.1s;">
                 <div class="search-container">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="search-tools" class="search-input" placeholder="Search tools (Press Ctrl + K)...">
@@ -112,9 +112,624 @@
                 </div>
             </section>
 
+            <!-- Additional Ad Slot -->
+            <div class="ad-slot ad-content-bottom" style="margin: 2rem 0; text-align: center;">
+                <span>Advertisement</span>
+            </div>
+<section id="tools-section" class="fade-in" style="animation-delay: 0.1s;">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-tools" class="search-input" placeholder="Search tools (Press Ctrl + K)...">
+                </div>
+
+                <div class="category-filters">
+                    <button class="filter-chip active" data-category="all">All Tools</button>
+                    <button class="filter-chip" data-category="ai">AI Tools</button>
+                    <button class="filter-chip" data-category="image">Image Tools</button>
+                    <button class="filter-chip" data-category="pdf">PDF Tools</button>
+                    <button class="filter-chip" data-category="utility">Utility Tools</button>
+                    <button class="filter-chip" data-category="audio-video">Audio/Video</button>
+                </div>
+
+                <div id="tools-grid" class="tools-grid">
+        <div class="tool-card fade-in" data-category="ai" data-id="ai-chat">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Ai</div>
+                    <span class="status-badge updated">updated</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🤖</div>
+            <h3 class="tool-title">AI Chat</h3>
+            <p class="tool-desc">Professional AI assistant with personas &amp; code support.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/ai-chat.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('ai-chat')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="ai" data-id="ai-image-generator">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Ai</div>
+                    <span class="status-badge updated">updated</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🎨</div>
+            <h3 class="tool-title">AI Image Generator</h3>
+            <p class="tool-desc">Generate art with styles &amp; history.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/ai-image-generator.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('ai-image-generator')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="ai" data-id="text-summarizer">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Ai</div>
+                    <span class="status-badge updated">updated</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📝</div>
+            <h3 class="tool-title">Text Summarizer</h3>
+            <p class="tool-desc">Summarize text with adjustable length &amp; focus.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/text-summarizer.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('text-summarizer')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="ai" data-id="text-rewriter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Ai</div>
+                    <span class="status-badge updated">updated</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">✍️</div>
+            <h3 class="tool-title">Text Rewriter</h3>
+            <p class="tool-desc">Rewrite text with different goals &amp; tones.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/text-rewriter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('text-rewriter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="ai" data-id="story-generator">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Ai</div>
+                    <span class="status-badge updated">updated</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📖</div>
+            <h3 class="tool-title">Story Generator</h3>
+            <p class="tool-desc">Generate creative stories with genre &amp; tone control.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/story-generator.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('story-generator')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="jpg-to-png">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    <span class="status-badge new">new</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🖼️</div>
+            <h3 class="tool-title">JPG to PNG</h3>
+            <p class="tool-desc">Convert JPG images to PNG format.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/jpg-to-png.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('jpg-to-png')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="png-to-jpg">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    <span class="status-badge new">new</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🖼️</div>
+            <h3 class="tool-title">PNG to JPG</h3>
+            <p class="tool-desc">Convert PNG images to JPG format.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/png-to-jpg.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('png-to-jpg')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="background-remover">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🖼️</div>
+            <h3 class="tool-title">Background Remover</h3>
+            <p class="tool-desc">Remove image backgrounds automatically.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/background-remover.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('background-remover')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="image-compressor">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📉</div>
+            <h3 class="tool-title">Image Compressor</h3>
+            <p class="tool-desc">Compress images without losing quality.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/image-compressor.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('image-compressor')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="image-resizer">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📏</div>
+            <h3 class="tool-title">Image Resizer</h3>
+            <p class="tool-desc">Resize images to specific dimensions.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/image-resizer.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('image-resizer')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="image-to-pdf">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    <span class="status-badge new">new</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📄</div>
+            <h3 class="tool-title">Image to PDF</h3>
+            <p class="tool-desc">Convert images to PDF documents.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/image-to-pdf.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('image-to-pdf')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="image" data-id="meme-generator">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Image</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">😂</div>
+            <h3 class="tool-title">Meme Generator</h3>
+            <p class="tool-desc">Create custom memes easily.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/meme-generator.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('meme-generator')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="pdf-to-image">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    <span class="status-badge new">new</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🖼️</div>
+            <h3 class="tool-title">PDF to Image</h3>
+            <p class="tool-desc">Convert PDF pages to JPG/PNG images.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/pdf-to-image.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('pdf-to-image')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="pdf-compressor">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🗜️</div>
+            <h3 class="tool-title">PDF Compressor</h3>
+            <p class="tool-desc">Reduce PDF file size.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/pdf-compressor.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('pdf-compressor')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="pdf-to-word">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📝</div>
+            <h3 class="tool-title">PDF to Word</h3>
+            <p class="tool-desc">Convert PDF files to Word documents.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/pdf-to-word.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('pdf-to-word')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="word-to-pdf">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📑</div>
+            <h3 class="tool-title">Word to PDF</h3>
+            <p class="tool-desc">Convert Word documents to PDF.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/word-to-pdf.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('word-to-pdf')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="pdf-merge">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🖇️</div>
+            <h3 class="tool-title">PDF Merge</h3>
+            <p class="tool-desc">Combine multiple PDFs into one.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/pdf-merge.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('pdf-merge')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="pdf-split">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">✂️</div>
+            <h3 class="tool-title">PDF Split</h3>
+            <p class="tool-desc">Split a PDF into multiple files.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/pdf-split.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('pdf-split')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="pdf" data-id="text-to-pdf">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Pdf</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📄</div>
+            <h3 class="tool-title">Text to PDF</h3>
+            <p class="tool-desc">Convert plain text to PDF.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/text-to-pdf.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('text-to-pdf')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="qr-code-generator">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    <span class="status-badge popular">popular</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">📱</div>
+            <h3 class="tool-title">QR Code Generator</h3>
+            <p class="tool-desc">Generate QR codes for URLs and text.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/qr-code-generator.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('qr-code-generator')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="password-generator">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    <span class="status-badge popular">popular</span>
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🔒</div>
+            <h3 class="tool-title">Password Generator</h3>
+            <p class="tool-desc">Generate strong, secure passwords.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/password-generator.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('password-generator')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="url-shortener">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🔗</div>
+            <h3 class="tool-title">URL Shortener</h3>
+            <p class="tool-desc">Shorten long URLs.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/url-shortener.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('url-shortener')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="color-picker">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🎨</div>
+            <h3 class="tool-title">Color Picker</h3>
+            <p class="tool-desc">Pick and convert colors.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/color-picker.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('color-picker')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="unit-converter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">⚖️</div>
+            <h3 class="tool-title">Unit Converter</h3>
+            <p class="tool-desc">Convert between different units.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/unit-converter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('unit-converter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="time-zone-converter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🌍</div>
+            <h3 class="tool-title">Time Zone Converter</h3>
+            <p class="tool-desc">Convert time between zones.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/time-zone-converter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('time-zone-converter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="word-counter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">1️⃣</div>
+            <h3 class="tool-title">Word Counter</h3>
+            <p class="tool-desc">Count words and characters.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/word-counter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('word-counter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="character-counter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🔢</div>
+            <h3 class="tool-title">Character Counter</h3>
+            <p class="tool-desc">Count characters in text.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/character-counter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('character-counter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="utility" data-id="json-formatter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Utility</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">{ }</div>
+            <h3 class="tool-title">JSON Formatter</h3>
+            <p class="tool-desc">Format and validate JSON.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/json-formatter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('json-formatter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="audio-video" data-id="audio-to-text">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Audio Video</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🎙️</div>
+            <h3 class="tool-title">Audio to Text</h3>
+            <p class="tool-desc">Transcribe audio files to text.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/audio-to-text.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('audio-to-text')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="audio-video" data-id="text-to-speech">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Audio Video</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🔊</div>
+            <h3 class="tool-title">Text to Speech</h3>
+            <p class="tool-desc">Convert text to spoken audio.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/text-to-speech.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('text-to-speech')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="audio-video" data-id="video-to-mp3">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Audio Video</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🎵</div>
+            <h3 class="tool-title">Video to MP3</h3>
+            <p class="tool-desc">Extract audio from video files.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/video-to-mp3.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('video-to-mp3')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="audio-video" data-id="mp3-cutter">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Audio Video</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">✂️</div>
+            <h3 class="tool-title">MP3 Cutter</h3>
+            <p class="tool-desc">Trim and cut MP3 audio files.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/mp3-cutter.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('mp3-cutter')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div>
+        <div class="tool-card fade-in" data-category="audio-video" data-id="voice-recorder">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div>
+                    <div class="tool-badge">Audio Video</div>
+                    
+                </div>
+                <button class="fav-toggle" aria-label="Favorite" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--warning);">☆</button>
+            </div>
+            <div class="tool-icon">🎤</div>
+            <h3 class="tool-title">Voice Recorder</h3>
+            <p class="tool-desc">Record your voice online.</p>
+            <div style="display:flex;gap:0.5rem;margin-top:auto;">
+                <a href="/tools/voice-recorder.html" class="btn btn-secondary btn-sm" style="flex:1">Open Tool</a>
+                <button onclick="toggleFavorite('voice-recorder')" class="btn btn-sm" style="border:1px solid var(--border-subtle);padding:0.5rem;" title="Add to Dashboard">
+                    ☆
+                </button>
+            </div>
+        </div></div>
+            </section>
             <!-- Supporting Section -->
             <section style="margin-top: 5rem; text-align: center;" class="fade-in" style="animation-delay: 0.2s;">
-                <h2 style="margin-bottom: 2rem;">Why QuickNova?</h2>
+                <h2 style="margin-bottom: 2rem;">Why QuickNva?</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
                     <div class="tool-card">
                         <div class="tool-icon">⚡</div>

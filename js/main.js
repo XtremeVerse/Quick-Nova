@@ -47,8 +47,16 @@ function initAds() {
     class SmartAds {
         constructor() {
             this.max = 5;
-            this.views = parseInt(sessionStorage.getItem('qn_ad_views') || '0');
-            this.optOut = localStorage.getItem('qn_ads_optout') === '1';
+            try {
+                this.views = parseInt(sessionStorage.getItem('qn_ad_views') || '0');
+            } catch (e) {
+                this.views = 0;
+            }
+            try {
+                this.optOut = localStorage.getItem('qn_ads_optout') === '1';
+            } catch (e) {
+                this.optOut = false;
+            }
             this.engaged = false;
             const e = () => { this.engaged = true; };
             window.addEventListener('click', e, { once: true, capture: true });
@@ -66,7 +74,9 @@ function initAds() {
         }
         inc() {
             this.views += 1;
-            sessionStorage.setItem('qn_ad_views', String(this.views));
+            try {
+                sessionStorage.setItem('qn_ad_views', String(this.views));
+            } catch (e) {}
         }
         report(type, status, message) {
             try { if (window.gtag) gtag('event', 'ad_'+status.toLowerCase(), { ad_type: type, detail: message || '' }); } catch(_) {}
@@ -128,7 +138,9 @@ function initAds() {
                 return;
             }
             if (type === 'SOCIAL') {
-                if (localStorage.getItem('qn_ad_socialbar') === '1') return;
+                try {
+                    if (localStorage.getItem('qn_ad_socialbar') === '1') return;
+                } catch (e) { return; }
                 this.inc();
                 const s = this.createScript(
                     'https://pl28401272.effectivegatecpm.com/51/1c/44/511c447359e25338ff26c7f09b965585.js',
@@ -136,7 +148,9 @@ function initAds() {
                     () => this.report('SOCIAL', 'Error')
                 );
                 document.body.appendChild(s);
-                localStorage.setItem('qn_ad_socialbar', '1');
+                try {
+                    localStorage.setItem('qn_ad_socialbar', '1');
+                } catch (e) {}
                 return;
             }
             if (type === 'SMARTLINK') {
@@ -150,6 +164,7 @@ function initAds() {
     const isMobile = window.innerWidth <= 768;
     const headerSlot = document.querySelector('.ad-slot.ad-header');
     const contentSlot = document.querySelector('.ad-slot.ad-content');
+    const contentBottomSlot = document.querySelector('.ad-slot.ad-content-bottom');
     const footerSlot = document.querySelector('.ad-slot.ad-footer');
     const ads = new SmartAds();
     const optToggle = document.getElementById('ads-optout');
@@ -181,7 +196,7 @@ function initAds() {
         const btnNative = document.createElement('button');
         btnNative.className = 'btn btn-sm';
         btnNative.textContent = 'Load Native';
-        btnNative.onclick = () => { if (contentSlot) ads.load('NATIVE', contentSlot); };
+        btnNative.onclick = () => { if (contentSlot) ads.load('NATIVE', contentSlot); if (contentBottomSlot) ads.load('NATIVE', contentBottomSlot); };
         actions.appendChild(btnPU);
         actions.appendChild(btnNative);
         panel.appendChild(actions);
@@ -194,6 +209,7 @@ function initAds() {
         document.body.appendChild(panel);
         if (headerSlot && !isMobile) ads.load('BANNER', headerSlot);
         if (contentSlot) ads.load('NATIVE', contentSlot);
+        if (contentBottomSlot) ads.load('NATIVE', contentBottomSlot);
         ads.load('SOCIAL');
     }
     const applyOptOut = () => {
@@ -205,7 +221,9 @@ function initAds() {
         optToggle.checked = ads.optOut;
         optToggle.addEventListener('change', () => {
             ads.optOut = optToggle.checked;
-            localStorage.setItem('qn_ads_optout', ads.optOut ? '1' : '0');
+            try {
+                localStorage.setItem('qn_ads_optout', ads.optOut ? '1' : '0');
+            } catch (e) {}
             applyOptOut();
         });
     }
@@ -213,6 +231,9 @@ function initAds() {
     // INSTANT banner ads - load immediately
     if (!ads.optOut && headerSlot && !isMobile) {
         ads.load('BANNER', headerSlot);
+    }
+    if (!ads.optOut && footerSlot && !isMobile) {
+        ads.load('BANNER', footerSlot);
     }
     // Additional banner slots for more revenue
     if (!ads.optOut) {
@@ -226,24 +247,19 @@ function initAds() {
             ads.load('BANNER', topBanner);
         }
     }
-    // SUPER FAST native ads - 3 seconds
-    setTimeout(() => {
-        if (ads.optOut) return;
+    // INSTANT native ads
+    if (!ads.optOut) {
         if (contentSlot) ads.load('NATIVE', contentSlot);
-    }, 3000);
-    // SUPER FAST social bar - 5 seconds  
-    setTimeout(() => {
-        if (ads.optOut) return;
-        if (document.hasFocus()) ads.load('SOCIAL');
-    }, 5000);
-    // INSTANT popunder on first click - 1 second
-    setTimeout(() => {
-        const t = () => {
-            if (!ads.optOut) ads.load('POPUNDER');
-            document.removeEventListener('click', t, true);
-        };
-        document.addEventListener('click', t, true);
-    }, 1000);
+        if (contentBottomSlot) ads.load('NATIVE', contentBottomSlot);
+    }
+    // INSTANT social bar
+    if (!ads.optOut) {
+        ads.load('SOCIAL');
+    }
+    // INSTANT popunder on load
+    if (!ads.optOut) {
+        ads.load('POPUNDER');
+    }
     if (footerSlot) {
         const a = document.createElement('a');
         a.href = 'https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41';
@@ -296,7 +312,10 @@ function initAds() {
 function initTheme() {
     const themeToggle = document.querySelector('.theme-toggle');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const storedTheme = localStorage.getItem('theme');
+    let storedTheme;
+    try {
+        storedTheme = localStorage.getItem('theme');
+    } catch (e) {}
 
     if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -311,7 +330,9 @@ function initTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            try {
+                localStorage.setItem('theme', newTheme);
+            } catch (e) {}
             updateThemeIcon(newTheme === 'dark');
         });
     }
@@ -377,7 +398,7 @@ function renderTools(tools) {
         }
 
         return `
-        <div class="tool-card fade-in" data-category="${tool.category}" data-id="${tool.id}">
+        <div class="tool-card" data-category="${tool.category}" data-id="${tool.id}">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                 <div>
                     <div class="tool-badge">${formatCategory(tool.category)}</div>
@@ -502,7 +523,9 @@ function toggleFavorite(id) {
     const favs = getFavorites();
     const idx = favs.indexOf(id);
     if (idx >= 0) favs.splice(idx, 1); else favs.push(id);
-    localStorage.setItem('qn_favorites', JSON.stringify(favs));
+    try {
+        localStorage.setItem('qn_favorites', JSON.stringify(favs));
+    } catch (e) {}
 }
 
 function recordRecent() {
@@ -513,27 +536,31 @@ function recordRecent() {
     let recent = [];
     try { recent = JSON.parse(localStorage.getItem('qn_recent') || '[]'); } catch(e) { recent = []; }
     recent = [tool.id].concat(recent.filter(id => id !== tool.id)).slice(0, 20);
-    localStorage.setItem('qn_recent', JSON.stringify(recent));
+    try {
+        localStorage.setItem('qn_recent', JSON.stringify(recent));
+    } catch (e) {}
 }
 
 function initStreak() {
-    const today = new Date();
-    const keyDate = 'qn_lastVisit';
-    const keyStreak = 'qn_streak';
-    const last = localStorage.getItem(keyDate);
-    const dstr = today.toDateString();
-    let streak = parseInt(localStorage.getItem(keyStreak) || '0');
-    if (!last) {
+    try {
+        const today = new Date();
+        const keyDate = 'qn_lastVisit';
+        const keyStreak = 'qn_streak';
+        const last = localStorage.getItem(keyDate);
+        const dstr = today.toDateString();
+        let streak = parseInt(localStorage.getItem(keyStreak) || '0');
+        if (!last) {
+            localStorage.setItem(keyDate, dstr);
+            localStorage.setItem(keyStreak, '1');
+            return;
+        }
+        if (last === dstr) return;
+        const prev = new Date(last);
+        const diff = Math.floor((today - prev) / (1000*60*60*24));
+        if (diff === 1) streak += 1; else streak = 1;
         localStorage.setItem(keyDate, dstr);
-        localStorage.setItem(keyStreak, '1');
-        return;
-    }
-    if (last === dstr) return;
-    const prev = new Date(last);
-    const diff = Math.floor((today - prev) / (1000*60*60*24));
-    if (diff === 1) streak += 1; else streak = 1;
-    localStorage.setItem(keyDate, dstr);
-    localStorage.setItem(keyStreak, String(streak));
+        localStorage.setItem(keyStreak, String(streak));
+    } catch (e) {}
 }
 
 function initPWA() {
@@ -749,9 +776,16 @@ function initInvite() {
 function initHomeShareNudge() {
     if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') return;
     const key = 'qn_home_visits';
-    let v = parseInt(localStorage.getItem(key) || '0');
+    let v;
+    try {
+        v = parseInt(localStorage.getItem(key) || '0');
+    } catch (e) {
+        v = 0;
+    }
     v += 1;
-    localStorage.setItem(key, String(v));
+    try {
+        localStorage.setItem(key, String(v));
+    } catch (e) {}
     if (v === 2 || v === 5) {
         setTimeout(() => {
             if (typeof showToast !== 'undefined') showToast('Enjoying QuickNova? Share with a friend!', 'info');
@@ -853,3 +887,21 @@ document.addEventListener('DOMContentLoaded', () => {
         nav.insertBefore(link, nav.querySelector('a[href="/about.html"]'));
     }
 });
+
+// Call init functions since scripts are loaded after DOMContentLoaded
+initAnalytics();
+initAds();
+initTheme();
+initMobileMenu();
+initToolsGrid();
+initSearchAndFilter();
+initStreak();
+recordRecent();
+initPWA();
+initSmartNudge();
+initTypingEffect();
+initShareUI();
+initToolSchema();
+initTrending();
+initInvite();
+initHomeShareNudge();

@@ -59,6 +59,7 @@
     height: 100%;
     position: relative;
     overflow: hidden;
+    opacity: 1;
 }
 
 .tool-card:hover {
