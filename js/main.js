@@ -452,6 +452,7 @@ function formatCategory(cat) {
 
 function initSearchAndFilter() {
     const searchInput = document.getElementById('search-tools');
+    const searchBtn = document.getElementById('search-btn');
     const filterChips = document.querySelectorAll('.filter-chip');
     
     // Initialize Fuse for fuzzy search
@@ -481,6 +482,13 @@ function initSearchAndFilter() {
 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value;
+            filterTools(query, getActiveCategory(), fuse);
+        });
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput ? searchInput.value : '';
             filterTools(query, getActiveCategory(), fuse);
         });
     }
