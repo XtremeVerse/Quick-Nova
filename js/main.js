@@ -456,20 +456,11 @@ function initSearchAndFilter() {
     const searchDropdown = document.getElementById('search-dropdown');
     const filterChips = document.querySelectorAll('.filter-chip');
     
-    // Initialize Fuse for fuzzy search
-    const fuseOptions = {
-        keys: ['name', 'desc'],
-        threshold: 0.4,
-        includeScore: true,
-        limit: 5 // Limit to 5 suggestions
-    };
-    const fuse = new Fuse(toolsData, fuseOptions);
-    
     if (searchInput) {
         const q = new URLSearchParams(window.location.search).get('q');
         if (q) {
             searchInput.value = q;
-            filterTools(q, getActiveCategory(), fuse);
+            filterTools(q, getActiveCategory());
         }
         
         // Keyboard shortcut (Ctrl/Cmd + K)
@@ -485,17 +476,17 @@ function initSearchAndFilter() {
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
             if (query) {
-                showSearchDropdown(query, fuse);
+                showSearchDropdown(query);
             } else {
                 hideSearchDropdown();
             }
-            filterTools(query, getActiveCategory(), fuse);
+            filterTools(query, getActiveCategory());
         });
 
         searchInput.addEventListener('focus', () => {
             const query = searchInput.value.trim();
             if (query) {
-                showSearchDropdown(query, fuse);
+                showSearchDropdown(query);
             }
         });
     }
@@ -503,7 +494,7 @@ function initSearchAndFilter() {
     if (searchBtn) {
         searchBtn.addEventListener('click', () => {
             const query = searchInput ? searchInput.value : '';
-            filterTools(query, getActiveCategory(), fuse);
+            filterTools(query, getActiveCategory());
             hideSearchDropdown();
         });
     }
@@ -517,7 +508,7 @@ function initSearchAndFilter() {
                 
                 const category = chip.getAttribute('data-category');
                 const query = searchInput ? searchInput.value : '';
-                filterTools(query, category, fuse);
+                filterTools(query, category);
             });
         });
     }
@@ -543,19 +534,17 @@ function filterTools(query, category, fuse) {
     if (query.trim() === '') {
         filtered = base;
     } else {
-        // Use Fuse for fuzzy search
-        const results = fuse.search(query);
-        // Filter results to only include items in base (after category filter)
-        const baseIds = new Set(base.map(t => t.id));
-        filtered = results
-            .filter(result => baseIds.has(result.item.id))
-            .map(result => result.item);
+        // Simple filter for reliable matching
+        filtered = base.filter(tool => 
+            tool.name.toLowerCase().includes(query.toLowerCase()) || 
+            tool.desc.toLowerCase().includes(query.toLowerCase())
+        );
     }
 
     renderTools(filtered);
 }
 
-function showSearchDropdown(query, fuse) {
+function showSearchDropdown(query) {
     const searchDropdown = document.getElementById('search-dropdown');
     if (!searchDropdown) return;
 
@@ -575,7 +564,13 @@ function showSearchDropdown(query, fuse) {
     results.forEach(tool => {
         const item = document.createElement('div');
         item.className = 'search-dropdown-item';
-        item.textContent = tool.name;
+        item.innerHTML = `
+            <div class="dropdown-icon">${tool.icon}</div>
+            <div class="dropdown-text">
+                <h4>${tool.name}</h4>
+                <p>${tool.desc}</p>
+            </div>
+        `;
         item.addEventListener('click', () => {
             window.location.href = tool.link;
         });
