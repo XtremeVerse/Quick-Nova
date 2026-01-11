@@ -471,6 +471,12 @@ function initSearchAndFilter() {
                 setTimeout(() => searchInput.style.borderColor = '', 300);
             }
         });
+
+        // Real-time filtering as you type
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            filterTools(query, getActiveCategory());
+        });
     }
 
     if (searchBtn) {
