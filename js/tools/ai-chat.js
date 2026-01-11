@@ -193,9 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
 
         try {
-            // For demo purposes, use mock response
-            // Uncomment below for real API
-            /*
+            // Prepare messages for API
+            // Always prepend current system prompt
+            const messages = [
+                { role: 'system', content: SYSTEM_PROMPTS[state.persona] || SYSTEM_PROMPTS['default'] },
+                ...state.history.slice(-10) // Keep context window reasonable (last 10 messages)
+            ];
+
             const response = await fetch('https://text.pollinations.ai/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -209,18 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('API Error');
 
             const data = await response.text();
-            */
-
-            // Mock response for testing
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
-            const mockResponses = [
-                "That's an interesting question! As an AI assistant, I'm here to help you with that. Could you provide more details?",
-                "I understand what you're asking. Let me break this down for you step by step...",
-                "Great point! Here's my take on that topic...",
-                "Thanks for sharing that. Based on what you've told me, I think the best approach would be...",
-                "That's a common question. The answer depends on several factors, but generally speaking..."
-            ];
-            const data = mockResponses[Math.floor(Math.random() * mockResponses.length)];
 
             // Remove typing indicator
             const typingIndicator = document.getElementById('typing-indicator');
