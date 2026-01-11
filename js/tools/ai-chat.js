@@ -193,43 +193,41 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
 
         try {
-            // Prepare messages for API
-            // Always prepend current system prompt
-            const messages = [
-                { role: 'system', content: SYSTEM_PROMPTS[state.persona] || SYSTEM_PROMPTS['default'] },
-                ...state.history.slice(-10) // Keep context window reasonable (last 10 messages)
-            ];
-
-            const response = await fetch('https://text.pollinations.ai/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: messages,
-                    model: state.model || 'openai',
-                    jsonMode: false
-                })
-            });
-
-            if (!response.ok) throw new Error('API Error');
-
-            const data = await response.text();
+            // Basic response for demo
+            await new Promise(resolve => setTimeout(resolve, 500)); // Short delay
+            
+            const userMessage = text.toLowerCase();
+            let response = "I understand you said: '" + text + "'. How can I help you with that?";
+            
+            // Simple keyword responses
+            if (userMessage.includes('hello') || userMessage.includes('hi')) {
+                response = "Hello! Nice to meet you. What can I help you with today?";
+            } else if (userMessage.includes('how are you')) {
+                response = "I'm doing well, thank you for asking! I'm here to help you.";
+            } else if (userMessage.includes('bye') || userMessage.includes('goodbye')) {
+                response = "Goodbye! Have a great day!";
+            } else if (userMessage.includes('code') || userMessage.includes('programming')) {
+                response = "I'd be happy to help with coding! What programming language are you working with?";
+            } else if (userMessage.includes('thank')) {
+                response = "You're welcome! Is there anything else I can assist you with?";
+            }
 
             // Remove typing indicator
             const typingIndicator = document.getElementById('typing-indicator');
             if (typingIndicator) typingIndicator.remove();
 
             // Add AI response
-            addMessageToUI('ai', data);
+            addMessageToUI('ai', response);
             
             // Save to history
-            state.history.push({ role: 'assistant', content: data });
+            state.history.push({ role: 'assistant', content: response });
             saveState();
 
         } catch (error) {
             console.error(error);
             const typingIndicator = document.getElementById('typing-indicator');
             if (typingIndicator) typingIndicator.remove();
-            addMessageToUI('ai', 'Sorry, I encountered an error. Please try again.');
+            addMessageToUI('ai', 'Sorry, something went wrong. Please try again.');
         }
     }
 
