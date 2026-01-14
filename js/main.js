@@ -453,6 +453,7 @@ function formatCategory(cat) {
 function initSearchAndFilter() {
     const searchInput = document.getElementById('search-tools');
     const searchBtn = document.getElementById('search-btn');
+    const searchForm = document.querySelector('form[action="/"]');
     const filterChips = document.querySelectorAll('.filter-chip');
     
     if (searchInput) {
@@ -479,8 +480,18 @@ function initSearchAndFilter() {
         });
     }
 
+    // Prevent form submission for instant results
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput ? searchInput.value.trim() : '';
+            filterTools(query, getActiveCategory());
+        });
+    }
+
     if (searchBtn) {
-        searchBtn.addEventListener('click', () => {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             const query = searchInput ? searchInput.value.trim() : '';
             filterTools(query, getActiveCategory());
         });
