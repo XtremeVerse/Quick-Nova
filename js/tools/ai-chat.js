@@ -4,17 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const newChatBtn = document.getElementById('new-chat-btn');
-    const clearHistoryBtn = document.getElementById('clear-history-btn');
-    const personaSelect = document.getElementById('persona-select');
-    const modelSelect = document.getElementById('model-select');
-    const sidebar = document.querySelector('.chat-sidebar');
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileSettingsBtn = document.getElementById('mobile-settings-btn');
-    const closeSidebarBtn = document.getElementById('toggle-sidebar-mobile');
-    const personaChips = document.querySelectorAll('[data-persona-chip]');
-    const modelQuick = document.getElementById('model-quick');
-    const newChatQuick = document.getElementById('new-chat-quick');
-    const clearQuick = document.getElementById('clear-history-quick');
+    const chatSidebar = document.getElementById('chat-sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeSidebarBtn = document.getElementById('close-sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const modeSelector = document.getElementById('mode-selector');
+    const quickActions = document.querySelectorAll('.quick-action-btn');
+    const voiceBtn = document.getElementById('voice-btn');
+    const optionsBtn = document.getElementById('options-btn');
 
     // --- Configuration ---
     const SYSTEM_PROMPTS = {
@@ -28,26 +25,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
     let state = {
         history: [],
-        persona: 'default',
-        model: 'openai'
+        currentPersona: 'default',
+        chatHistoryList: []
     };
 
-    // --- Initialization ---
+    // --- Initialize ---
     init();
 
     function init() {
         loadState();
         setupMarkdown();
         setupEventListeners();
-        renderHistory();
-        
-        // Mobile sidebar check
-        checkMobileLayout();
-        window.addEventListener('resize', checkMobileLayout);
+        setupMobileMenu();
+        setupAutoResize();
+        renderInitialState();
     }
 
     function setupMarkdown() {
-        // Configure marked.js
         marked.setOptions({
             highlight: function(code, lang) {
                 if (lang && hljs.getLanguage(lang)) {
@@ -60,164 +54,143 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key.toLowerCase() === 'k') {
-            e.preventDefault();
-            userInput.focus();
-        }
-        if (e.ctrlKey && e.key === '/') {
-            e.preventDefault();
-            if (sidebar.style.display === 'none' || !sidebar.classList.contains('active')) {
-                sidebar.classList.add('active');
-                sidebar.style.display = 'flex';
-            } else {
-                sidebar.classList.remove('active');
-                sidebar.style.display = 'none';
+    function setupEventListeners() {
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
             }
-        }
-        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'n') {
-            e.preventDefault();
-            startNewChat();
-        }
-    });
+        });
 
-    function loadState() {
-        const savedState = localStorage.getItem('quicknova_ai_state');
-        if (savedState) {
-            state = JSON.parse(savedState);
-            // Restore settings in UI
-            if (state.persona) personaSelect.value = state.persona;
-            if (state.model) modelSelect.value = state.model;
+        newChatBtn.addEventListener('click', startNewChat);
+        
+        // Mode selection
+        modeSelector.querySelectorAll('.mode-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                modeSelector.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                state.currentPersona = chip.dataset.persona;
+                saveState();
+            });
+        });
+
+        // Quick actions
+        quickActions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                userInput.value = btn.dataset.prompt;
+                userInput.focus();
+            });
+        });
+
+        // Voice button
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', () => {
+                showToast('Voice input coming soon!', 'info');
+            });
+        }
+
+        // Options button
+        if (optionsBtn) {
+            optionsBtn.addEventListener('click', () => {
+                showToast('More options coming soon!', 'info');
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                userInput.focus();
+            }
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                chatSidebar.classList.toggle('active');
+            }
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                startNewChat();
+            }
+        });
+    }
+
+    function setupMobileMenu() {
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                chatSidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+        }
+
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', () => {
+                chatSidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                chatSidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+
+        // Close sidebar on mobile when new chat is clicked
+        newChatBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 900) {
+                chatSidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+    }
+
+    function setupAutoResize() {
+        userInput.addEventListener('input', () => {
+            userInput.style.height = 'auto';
+            userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+        });
+    }
+
+    function renderInitialState() {
+        if (state.history.length === 0) {
+            chatMessages.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🤖</div>
+                    <h2>Welcome to QuickNova AI</h2>
+                    <p>Start a conversation or select a mode to get personalized assistance</p>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" data-prompt="Summarize: ">📝 Summarize</button>
+                        <button class="quick-action-btn" data-prompt="Explain: ">💡 Explain</button>
+                        <button class="quick-action-btn" data-prompt="Fix grammar: ">✓ Fix</button>
+                        <button class="quick-action-btn" data-prompt="Translate: ">🌐 Translate</button>
+                    </div>
+                </div>
+            `;
+            attachQuickActionListeners();
+        } else {
+            renderHistory();
         }
     }
 
-    function saveState() {
-        localStorage.setItem('quicknova_ai_state', JSON.stringify(state));
-    }
-
-    // --- UI Rendering ---
     function renderHistory() {
         chatMessages.innerHTML = '';
-        
-        // Always show welcome message if history is empty
-        if (state.history.length === 0) {
-            addMessageToUI('ai', "Hello! I'm QuickNova AI. How can I help you today?");
-            return;
-        }
-
         state.history.forEach(msg => {
-            // Skip system messages in UI
-            if (msg.role === 'system') return;
-            addMessageToUI(msg.role === 'user' ? 'user' : 'ai', msg.content);
+            if (msg.role === 'user') {
+                addMessageToUI('user', msg.content);
+            } else if (msg.role === 'ai') {
+                addMessageToUI('ai', msg.content);
+            }
         });
-        
         scrollToBottom();
     }
 
-    function addMessageToUI(role, content, isTyping = false) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${role}`;
-        if (isTyping) msgDiv.id = 'typing-indicator';
-
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.textContent = role === 'user' ? '👤' : '🤖';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'message-content';
-
-        if (role === 'ai' && !isTyping) {
-            contentDiv.innerHTML = marked.parse(content);
-            // Add copy buttons to code blocks
-            addCopyButtons(contentDiv);
-        } else {
-            contentDiv.textContent = content; // User messages are plain text to prevent XSS
-            if (isTyping) contentDiv.innerHTML = '<em>Thinking...</em>';
-        }
-
-        msgDiv.appendChild(avatar);
-        msgDiv.appendChild(contentDiv);
-        chatMessages.appendChild(msgDiv);
-
-        scrollToBottom();
-    }
-
-    function addCopyButtons(element) {
-        const preTags = element.querySelectorAll('pre');
-        preTags.forEach(pre => {
-            if (pre.querySelector('.copy-btn')) return; // Already has button
-
-            const btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = 'Copy';
+    function attachQuickActionListeners() {
+        chatMessages.querySelectorAll('.quick-action-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const code = pre.querySelector('code').innerText;
-                navigator.clipboard.writeText(code);
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 2000);
+                userInput.value = btn.dataset.prompt;
+                userInput.focus();
             });
-            pre.appendChild(btn);
-        });
-    }
-
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function checkMobileLayout() {
-        const isMobile = window.innerWidth <= 900;
-        if (isMobile) {
-            // Mobile layout
-            mobileMenuBtn.style.display = 'block';
-            if (mobileSettingsBtn) mobileSettingsBtn.style.display = 'block';
-            if (closeSidebarBtn) closeSidebarBtn.style.display = 'block';
-            sidebar.classList.remove('active');
-            sidebar.style.display = 'none';
-        } else {
-            // Desktop layout
-            mobileMenuBtn.style.display = 'none';
-            if (mobileSettingsBtn) mobileSettingsBtn.style.display = 'none';
-            if (closeSidebarBtn) closeSidebarBtn.style.display = 'none';
-            sidebar.classList.remove('active');
-            sidebar.style.display = 'flex';
-        }
-    }
-
-    // --- Mobile Sidebar Toggle ---
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            sidebar.style.display = sidebar.classList.contains('active') ? 'flex' : 'none';
-        });
-    }
-
-    if (mobileSettingsBtn) {
-        mobileSettingsBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            sidebar.style.display = sidebar.classList.contains('active') ? 'flex' : 'none';
-        });
-    }
-
-    if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            sidebar.style.display = 'none';
-        });
-    }
-
-    // Close sidebar when a button is clicked on mobile
-    if (window.innerWidth <= 900) {
-        newChatBtn.addEventListener('click', () => {
-            setTimeout(() => {
-                sidebar.classList.remove('active');
-                sidebar.style.display = 'none';
-            }, 100);
-        });
-        clearHistoryBtn.addEventListener('click', () => {
-            setTimeout(() => {
-                sidebar.classList.remove('active');
-                sidebar.style.display = 'none';
-            }, 100);
         });
     }
 
@@ -226,183 +199,151 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = userInput.value.trim();
         if (!text) return;
 
-        // UI Update
+        // Remove empty state
+        const emptyState = chatMessages.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+
+        // Add user message
         addMessageToUI('user', text);
         userInput.value = '';
-        userInput.style.height = '60px'; // Reset height
-        
-        // Add typing indicator
-        addMessageToUI('ai', '...', true);
+        userInput.style.height = 'auto';
 
-        // Update History
+        // Add typing indicator
+        addMessageToUI('ai', getTypingIndicator(), true);
+
+        // Update history
         state.history.push({ role: 'user', content: text });
         saveState();
 
         try {
-            // Basic response for demo
-            await new Promise(resolve => setTimeout(resolve, 500)); // Short delay
-            
-            const userMessage = text.toLowerCase();
-            let response = "I understand you said: '" + text + "'. How can I help you with that?";
-            
-            // Simple keyword responses
-            if (userMessage.includes('hello') || userMessage.includes('hi')) {
-                response = "Hello! Nice to meet you. What can I help you with today?";
-            } else if (userMessage.includes('how are you')) {
-                response = "I'm doing well, thank you for asking! I'm here to help you.";
-            } else if (userMessage.includes('bye') || userMessage.includes('goodbye')) {
-                response = "Goodbye! Have a great day!";
-            } else if (userMessage.includes('code') || userMessage.includes('programming')) {
-                response = "I'd be happy to help with coding! What programming language are you working with?";
-            } else if (userMessage.includes('thank')) {
-                response = "You're welcome! Is there anything else I can assist you with?";
-            }
+            // Simulate API response
+            await new Promise(resolve => setTimeout(resolve, 800));
 
             // Remove typing indicator
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) typingIndicator.remove();
+            const lastMessage = chatMessages.lastElementChild;
+            if (lastMessage && lastMessage.querySelector('.typing-indicator')) {
+                lastMessage.remove();
+            }
 
-            // Add AI response
+            // Generate response
+            let response = generateResponse(text);
             addMessageToUI('ai', response);
-            
-            // Save to history
-            state.history.push({ role: 'assistant', content: response });
-            saveState();
 
+            state.history.push({ role: 'ai', content: response });
+            saveState();
         } catch (error) {
-            console.error(error);
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) typingIndicator.remove();
-            addMessageToUI('ai', 'Sorry, something went wrong. Please try again.');
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
         }
+
+        scrollToBottom();
+    }
+
+    function generateResponse(userMessage) {
+        const messages = [
+            "That's a great question! Let me help you with that.",
+            "I understand what you're asking. Here's what I can tell you:",
+            "Based on what you've shared, here's my response:",
+            "Thanks for asking! Here's my perspective:",
+            "I appreciate the question. Here's my analysis:"
+        ];
+
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return `${randomMessage}\n\nYou asked about: "${userMessage}"\n\nI'm QuickNova AI, and I'm here to help you with coding, writing, analysis, and more. Feel free to ask me anything!`;
+    }
+
+    function getTypingIndicator() {
+        return '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    }
+
+    function addMessageToUI(role, content, isHTML = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = role === 'user' ? '👤' : '🤖';
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        
+        if (isHTML) {
+            contentDiv.innerHTML = content;
+        } else {
+            contentDiv.textContent = content;
+            // Parse markdown if it's AI response
+            if (role === 'ai') {
+                const parsed = marked.parse(content);
+                contentDiv.innerHTML = parsed;
+                // Highlight code blocks
+                contentDiv.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }
+        }
+
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(messageDiv);
+
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
     function startNewChat() {
-        if (confirm('Start a new chat? This will clear the current conversation from view (but settings are saved).')) {
-            state.history = [];
-            saveState();
-            renderHistory();
-            if (window.innerWidth <= 768) sidebar.classList.remove('active');
-        }
+        state.history = [];
+        state.chatHistoryList.push({
+            id: Date.now(),
+            title: 'New Chat',
+            messages: []
+        });
+        saveState();
+
+        chatMessages.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🤖</div>
+                <h2>Welcome to QuickNova AI</h2>
+                <p>Start a conversation or select a mode to get personalized assistance</p>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" data-prompt="Summarize: ">📝 Summarize</button>
+                    <button class="quick-action-btn" data-prompt="Explain: ">💡 Explain</button>
+                    <button class="quick-action-btn" data-prompt="Fix grammar: ">✓ Fix</button>
+                    <button class="quick-action-btn" data-prompt="Translate: ">🌐 Translate</button>
+                </div>
+            </div>
+        `;
+
+        attachQuickActionListeners();
+        userInput.focus();
     }
 
-    function clearHistory() {
-        if (confirm('Are you sure you want to clear all history?')) {
-            state.history = [];
-            saveState();
-            renderHistory();
-        }
-    }
-
-    // --- Event Listeners ---
-    function setupEventListeners() {
-        sendBtn.addEventListener('click', handleSend);
-        
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-            }
-        });
-
-        // Auto-resize textarea
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-            if (this.value === '') this.style.height = '60px';
-        });
-
-        newChatBtn.addEventListener('click', startNewChat);
-        clearHistoryBtn.addEventListener('click', clearHistory);
-
-        personaSelect.addEventListener('change', (e) => {
-            state.persona = e.target.value;
-            saveState();
-            // Optional: Add a system message indicating mode switch
-            // addMessageToUI('system', `Switched to ${e.target.options[e.target.selectedIndex].text} mode.`);
-        });
-
-        modelSelect.addEventListener('change', (e) => {
-            state.model = e.target.value;
-            saveState();
-        });
-
-        mobileMenuBtn.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            sidebar.style.display = 'flex';
-        });
-
-        closeSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            sidebar.style.display = 'none';
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768 && 
-                sidebar.classList.contains('active') && 
-                !sidebar.contains(e.target) && 
-                e.target !== mobileMenuBtn) {
-                sidebar.classList.remove('active');
-                sidebar.style.display = 'none';
-            }
-        });
-
-        personaChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                personaChips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                state.persona = chip.getAttribute('data-persona-chip');
-                personaSelect.value = state.persona;
-                saveState();
-            });
-        });
-        // Set initial active persona chip
-        personaChips.forEach(c => {
-            if (c.getAttribute('data-persona-chip') === state.persona) {
-                c.classList.add('active');
-            }
-        });
-        if (modelQuick) {
-            modelQuick.value = state.model;
-            modelQuick.addEventListener('change', (e) => {
-                state.model = e.target.value;
-                modelSelect.value = state.model;
-                saveState();
-            });
-        }
-        if (newChatQuick) newChatQuick.addEventListener('click', startNewChat);
-        if (clearQuick) clearQuick.addEventListener('click', clearHistory);
-
-        const quickChips = document.querySelectorAll('#quick-bar [data-prompt]');
-        quickChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                const p = chip.getAttribute('data-prompt') || '';
-                userInput.focus();
-                const current = userInput.value;
-                if (!current) {
-                    userInput.value = p;
-                } else {
-                    userInput.value = current + '\n' + p;
+    // --- State Management ---
+    function loadState() {
+        try {
+            const saved = localStorage.getItem('qn_ai_chat_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+                // Set active persona chip
+                const activeChip = modeSelector.querySelector(`[data-persona="${state.currentPersona}"]`);
+                if (activeChip) {
+                    modeSelector.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+                    activeChip.classList.add('active');
                 }
-                const event = new Event('input');
-                userInput.dispatchEvent(event);
-            });
-        });
-
-        sendBtn.disabled = true;
-        function refreshSend() {
-            const hasText = userInput.value.trim().length > 0;
-            sendBtn.disabled = !hasText;
-            sendBtn.style.opacity = hasText ? '1' : '0.6';
-        }
-        refreshSend();
-        userInput.addEventListener('input', refreshSend);
-        userInput.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handleSend();
             }
-        });
+        } catch (e) {
+            console.error('Failed to load state:', e);
+        }
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem('qn_ai_chat_state', JSON.stringify(state));
+        } catch (e) {
+            console.error('Failed to save state:', e);
+        }
     }
 });
