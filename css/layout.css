@@ -50,14 +50,10 @@
 .nav-links a {
     font-weight: 500;
     color: var(--text-muted);
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    transition: all 0.2s ease;
 }
 
 .nav-links a:hover, .nav-links a.active {
     color: var(--accent-blue);
-    background: rgba(0, 112, 243, 0.05);
 }
 
 /* Mobile Menu Toggle (Hidden on Desktop) */
@@ -67,15 +63,6 @@
     background: none;
     color: var(--text-main);
     cursor: pointer;
-    padding: 0.5rem;
-    min-height: 44px;
-    min-width: 44px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.mobile-menu-btn:active {
-    background: var(--bg-elevated);
 }
 
 /* Main Content */
@@ -124,98 +111,18 @@
     font-size: 0.9rem;
 }
 
-/* Mobile Menu Dropdown */
-.nav-dropdown {
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background: var(--bg-elevated);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 1rem;
-    display: none;
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 999;
-    animation: slideDown 0.3s ease;
-}
-
-.nav-dropdown.active {
-    display: flex;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.nav-dropdown a {
-    padding: 0.875rem 1rem;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    color: var(--text-main);
-}
-
-.nav-dropdown a:hover {
-    background: rgba(0, 112, 243, 0.1);
-    color: var(--accent-blue);
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     .nav-links {
-        position: fixed;
-        top: 70px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        gap: 0;
-        background: var(--bg-elevated);
-        border-bottom: 1px solid var(--border-subtle);
-        padding: 1rem 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        z-index: 1000;
-        width: 100vw;
-    }
-    
-    .nav-links.active {
-        max-height: 100vh;
-        display: flex;
-    }
-    
-    .nav-links a {
-        padding: 1rem;
-        border: none;
-        border-bottom: 1px solid var(--border-subtle);
-        width: 100%;
-        text-align: left;
-    }
-    
-    .nav-links a:last-child {
-        border-bottom: none;
+        display: none; /* Add mobile menu logic later if needed or simple stack */
     }
     
     .mobile-menu-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
+        display: block;
     }
     
     .header-inner {
         padding: 0 1rem;
-    }
-    
-    .site-header {
-        height: 64px;
     }
 }
 

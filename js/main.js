@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Consent-first: show consent banner and initialize analytics/ads only after user grants permission
+    initAnalytics();
     initTheme();
     initMobileMenu();
-    initSmartFeatures();
     initToolsGrid();
     initSearchAndFilter();
     initStreak();
@@ -15,12 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initTrending();
     initInvite();
     initHomeShareNudge();
-
-    initConsentBanner();
-    // Dynamic meta and referral systems
-    initDynamicMeta();
-    initReferral();
-    initShareTemplates();
+    // Initialize ads after all DOM elements are in place
+    setTimeout(() => initAds(), 100);
 });
 
 function initAnalytics() {
@@ -33,58 +28,6 @@ function initAnalytics() {
     window.gtag = function(){ dataLayer.push(arguments); };
     gtag('js', new Date());
     gtag('config', 'G-88T5VL450S');
-}
-
-// Consent banner: must be called on DOMContentLoaded
-function initConsentBanner() {
-    try {
-        const stored = localStorage.getItem('qn_consent');
-        if (stored === 'granted') {
-            initAnalytics();
-            // Small delay to ensure DOM ready for ad insertion
-            setTimeout(() => initAds(), 200);
-            return;
-        }
-        if (stored === 'denied') {
-            // Respect denial: set ads opt-out
-            try { localStorage.setItem('qn_ads_optout', '1'); } catch(e){}
-            return;
-        }
-    } catch (e) {
-        console.warn('Consent read error', e);
-    }
-
-    // Create banner
-    const banner = document.createElement('div');
-    banner.id = 'consent-banner';
-    banner.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;z-index:99999;background:var(--bg-elevated);border:1px solid var(--border-subtle);padding:12px;border-radius:10px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow-soft);';
-    banner.innerHTML = `
-        <div style="flex:1;">
-            <strong>Privacy & Analytics</strong>
-            <div style="color:var(--text-muted);font-size:0.95rem;margin-top:4px;">We use analytics and ads to keep QuickNova free. Do you allow anonymous analytics and non-intrusive ads?</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-            <button id="consent-accept" class="btn btn-primary">Allow</button>
-            <button id="consent-decline" class="btn btn-secondary">Decline</button>
-            <a href="/privacy.html" style="color:var(--text-muted);font-size:0.9rem;margin-left:8px;">Privacy</a>
-        </div>
-    `;
-    document.body.appendChild(banner);
-
-    document.getElementById('consent-accept').addEventListener('click', () => {
-        try { localStorage.setItem('qn_consent', 'granted'); } catch (e) {}
-        // Initialize analytics and ads
-        initAnalytics();
-        setTimeout(() => initAds(), 200);
-        banner.remove();
-    });
-
-    document.getElementById('consent-decline').addEventListener('click', () => {
-        try { localStorage.setItem('qn_consent', 'denied'); localStorage.setItem('qn_ads_optout','1'); } catch (e) {}
-        // Ensure ads hidden
-        document.querySelectorAll('.ad-slot').forEach(el => el.style.display = 'none');
-        banner.remove();
-    });
 }
 
 function initAds() {
@@ -148,12 +91,12 @@ function initAds() {
         }
         createScript(src, onload, onerror) {
             const s = document.createElement('script');
-            // Lazy-load ad scripts to avoid blocking and to respect consent
             s.src = src;
             s.async = true;
-            s.defer = true;
             s.onerror = onerror;
-            if (onload) s.onload = onload;
+            if (onload) {
+                s.onload = onload;
+            }
             return s;
         }
         load(type, slot) {
@@ -171,14 +114,6 @@ function initAds() {
                     const setup = document.createElement('script');
                     setup.type = 'text/javascript';
                     setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
-                    // Only load heavy banner scripts on non-mobile AND after consent
-                    const consent = (function(){ try{ return localStorage.getItem('qn_consent')==='granted'; }catch(e){return false;} })();
-                    const isMobile = window.innerWidth <= 768;
-                    if (!consent || isMobile) {
-                        slot.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:0.9rem;">Ad space (non-intrusive)</div>';
-                        this.report('BANNER','Deferred','Mobile or no consent');
-                        return;
-                    }
                     const src = this.createScript(
                         'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js',
                         () => this.report('BANNER', 'Loaded'),
@@ -205,36 +140,22 @@ function initAds() {
                         'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
                         () => this.report('NATIVE', 'Loaded'),
                         () => this.report('NATIVE', 'Error')
-                    try {
-                        const consent = (function(){ try{ return localStorage.getItem('qn_consent')==='granted'; }catch(e){return false;} })();
-                        const isMobile = window.innerWidth <= 768;
-                        if (!consent) {
-                            slot.innerHTML = '<div style="padding:10px;color:var(--text-muted);font-size:0.9rem;">Ad (consent required)</div>';
-                            this.report('NATIVE','Deferred','No consent');
-                            return;
-                        }
-                        if (isMobile) {
-                            // Load a lightweight native placeholder on mobile
-                            slot.innerHTML = '<div style="padding:10px;color:var(--text-muted);font-size:0.9rem;">Sponsored - try our premium tools</div>';
-                            this.report('NATIVE','Placeholder','Mobile lightweight');
-                            this.inc();
-                            return;
-                        }
-                        const div = document.createElement('div');
-                        div.id = 'container-b03554437e27c7af7c3e026651b104da';
-                        slot.innerHTML = '';
-                        slot.appendChild(div);
-                        const s = this.createScript(
-                            'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
-                            () => this.report('NATIVE', 'Loaded'),
-                            () => this.report('NATIVE', 'Error')
-                        );
-                        s.setAttribute('data-cfasync', 'false');
-                        slot.appendChild(s);
-                    } catch (e) {
-                        console.error('Native ad error:', e);
-                        this.report('NATIVE', 'Error', e.message);
-                    }
+                    );
+                    s.setAttribute('data-cfasync', 'false');
+                    slot.appendChild(s);
+                } catch (e) {
+                    console.error('Native ad error:', e);
+                    this.report('NATIVE', 'Error', e.message);
+                }
+                return;
+            }
+            if (type === 'POPUNDER') {
+                this.inc();
+                try {
+                    const s = this.createScript(
+                        'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js',
+                        () => this.report('POPUNDER', 'Loaded'),
+                        () => this.report('POPUNDER', 'Error')
                     );
                     document.body.appendChild(s);
                 } catch (e) {
@@ -374,10 +295,7 @@ function initAds() {
     }
     // INSTANT popunder on load
     if (!ads.optOut) {
-        // Avoid intrusive popunder on mobile devices
-        if (!isMobile) {
-            ads.load('POPUNDER');
-        }
+        ads.load('POPUNDER');
     }
     if (footerSlot) {
         const a = document.createElement('a');
@@ -464,431 +382,31 @@ function updateThemeIcon(isDark) {
     }
 }
 
-// ===== SMART FEATURES SYSTEM =====
-function initSmartFeatures() {
-    // 1. Smart Tool Recommendations Based on User History
-    initSmartRecommendations();
-    
-    // 2. Mobile-Specific Smart Features
-    if (isMobileView()) {
-        initMobileSmartFeatures();
-    }
-    
-    // 3. Context-aware Quick Actions
-    initQuickActions();
-    
-    // 4. User Behavior Analytics
-    trackUserBehavior();
-}
-
-function isMobileView() {
-    return window.innerWidth <= 768;
-}
-
-// FEATURE 1: Smart Recommendations
-function initSmartRecommendations() {
-    const container = document.querySelector('.hero, .home-hero, main > section:first-child, .tools-container');
-    if (!container) return;
-    
-    // Get user history and favorites
-    let recentTools = getRecent();
-    let favTools = getFavorites();
-    
-    if (recentTools.length === 0 && favTools.length === 0) {
-        // New user - show trending instead
-        suggestTrendingTools();
-    } else {
-        // Suggest related tools based on usage
-        suggestRelatedTools(recentTools, favTools);
-    }
-}
-
-function suggestTrendingTools() {
-    if (document.querySelector('[data-smart-section="trending"]')) return;
-    
-    const trendingTools = toolsData.filter(t => t.badges && t.badges.includes('popular'));
-    if (trendingTools.length === 0) return;
-    
-    const section = document.createElement('section');
-    section.setAttribute('data-smart-section', 'trending');
-    section.style.cssText = 'margin: 2rem 0; padding: 1.5rem; background: var(--bg-elevated); border-radius: 12px; border: 1px solid var(--border-subtle);';
-    
-    section.innerHTML = `
-        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-size: 1.3rem;">🔥</span> Trending Tools
-        </h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Tools loved by thousands of users</p>
-        <div id="trending-quick-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;"></div>
-    `;
-    
-    const mainContent = document.querySelector('main, .main-content');
-    if (mainContent) {
-        mainContent.insertBefore(section, mainContent.firstChild);
-    }
-    
-    const grid = section.querySelector('#trending-quick-grid');
-    trendingTools.slice(0, 6).forEach(tool => {
-        const card = document.createElement('a');
-        card.href = tool.link;
-        card.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; background: var(--bg); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.3s ease; border: 1px solid transparent;';
-        card.innerHTML = `<div style="font-size: 2rem;">${tool.icon}</div><span style="font-size: 0.75rem; text-align: center; font-weight: 500;">${tool.name}</span>`;
-        card.onmouseover = () => card.style.cssText += 'border-color: var(--accent-blue); transform: translateY(-2px);';
-        card.onmouseout = () => card.style.cssText = card.style.cssText.replace('border-color: var(--accent-blue); transform: translateY(-2px);', '');
-        grid.appendChild(card);
-    });
-}
-
-function suggestRelatedTools(recentTools, favTools) {
-    const allUsedIds = [...new Set([...recentTools, ...favTools])];
-    if (allUsedIds.length === 0) return;
-    
-    // Get category of most recent tools
-    const usedTools = toolsData.filter(t => allUsedIds.includes(t.id));
-    const categories = [...new Set(usedTools.map(t => t.category))];
-    
-    // Find related tools in same categories
-    const relatedTools = toolsData.filter(t => 
-        !allUsedIds.includes(t.id) && categories.includes(t.category)
-    ).slice(0, 4);
-    
-    if (relatedTools.length === 0) return;
-    
-    const section = document.createElement('section');
-    section.setAttribute('data-smart-section', 'recommendations');
-    section.style.cssText = 'margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, var(--bg-elevated), var(--bg)); border-radius: 12px; border: 1px solid var(--border-subtle);';
-    
-    section.innerHTML = `
-        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-size: 1.3rem;">💡</span> Recommended For You
-        </h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Based on your recent activity</p>
-        <div id="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;"></div>
-    `;
-    
-    const mainContent = document.querySelector('main, .main-content');
-    if (mainContent) {
-        mainContent.insertBefore(section, mainContent.firstChild);
-    }
-    
-    const grid = section.querySelector('#recommendations-grid');
-    relatedTools.forEach(tool => {
-        const card = document.createElement('a');
-        card.href = tool.link;
-        card.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; background: var(--bg); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.3s ease; border: 1px solid var(--accent-blue);';
-        card.innerHTML = `<div style="font-size: 2rem;">${tool.icon}</div><span style="font-size: 0.75rem; text-align: center; font-weight: 500;">${tool.name}</span>`;
-        grid.appendChild(card);
-    });
-}
-
-// FEATURE 2: Mobile-Specific Smart Features
-function initMobileSmartFeatures() {
-    // Add touch-friendly spacing
-    const toolCards = document.querySelectorAll('.tool-card');
-    toolCards.forEach(card => {
-        card.style.minHeight = '280px';
-        card.style.padding = '1.25rem';
-        
-        // Make buttons bigger on mobile
-        const buttons = card.querySelectorAll('a.btn, button.btn');
-        buttons.forEach(btn => {
-            btn.style.padding = '0.75rem 1rem';
-            btn.style.minHeight = '44px'; // iOS recommended touch target
-            btn.style.display = 'flex';
-            btn.style.alignItems = 'center';
-            btn.style.justifyContent = 'center';
-        });
-    });
-    
-    // Add swipe gestures
-    enableSwipeGestures();
-    
-    // Add tap-friendly search
-    enhanceMobileSearch();
-    
-    // Bottom navigation for mobile
-    initMobileBottomBar();
-    // Auto-hide header on scroll for immersive mobile view
-    initHeaderAutoHide();
-}
-
-function enableSwipeGestures() {
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    document.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, false);
-    
-    document.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, false);
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // Swiped left
-                const nav = document.querySelector('.nav-links');
-                if (nav) nav.style.display = 'none';
-            } else {
-                // Swiped right
-                const nav = document.querySelector('.nav-links');
-                if (nav && isMobileView()) nav.style.display = 'flex';
-            }
-        }
-    }
-}
-
-function initMobileBottomBar() {
-    if (!isMobileView()) return;
-    if (document.getElementById('qn-mobile-bar')) return;
-    const bar = document.createElement('nav');
-    bar.id = 'qn-mobile-bar';
-    bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:var(--bg-elevated);border-top:1px solid var(--border-subtle);display:flex;justify-content:space-around;padding:8px 6px;gap:6px;box-shadow:var(--shadow-soft);';
-
-    const btns = [
-        {id:'home', icon:'🏠', href:'/'},
-        {id:'tools', icon:'🧰', href:'/tools/'},
-        {id:'share', icon:'🔗', action:'share'},
-        {id:'theme', icon:'🌓', action:'theme'},
-        {id:'search', icon:'🔎', action:'search'}
-    ];
-
-    btns.forEach(b => {
-        const el = document.createElement('button');
-        el.className = 'btn-icon';
-        el.style.cssText = 'background:none;border:none;font-size:1.25rem;display:flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;min-width:48px;min-height:44px;';
-        el.innerHTML = b.icon;
-        if (b.href) el.addEventListener('click', () => location.href = b.href);
-        if (b.action === 'share') el.addEventListener('click', async () => {
-            const url = window.location.href;
-            if (navigator.share) { try { await navigator.share({ title: document.title, url }); if (window.gtag) gtag('event','share',{method:'navigator'}); } catch(_){} }
-            else { try { await navigator.clipboard.writeText(url); if (window.gtag) gtag('event','share',{method:'copy'}); if (typeof showToast!=='undefined') showToast('Link copied', 'info'); } catch(_){} }
-        });
-        if (b.action === 'theme') el.addEventListener('click', () => {
-            const cur = document.documentElement.getAttribute('data-theme');
-            const nw = cur === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', nw);
-            try { localStorage.setItem('theme', nw); } catch(e){}
-            updateThemeIcon(nw === 'dark');
-        });
-        if (b.action === 'search') el.addEventListener('click', () => {
-            const s = document.querySelector('.search-input, input[type="search"]'); if (s) { s.focus(); window.scrollTo({top: s.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'}); }
-        });
-        bar.appendChild(el);
-    });
-
-    document.body.appendChild(bar);
-    // ensure body has safe bottom padding so content isn't hidden
-    document.body.style.paddingBottom = Math.max(parseInt(getComputedStyle(document.body).paddingBottom||0), 70) + 'px';
-}
-
-function initHeaderAutoHide() {
-    if (!isMobileView()) return;
-    const header = document.querySelector('.site-header');
-    if (!header) return;
-    let lastY = window.scrollY;
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (ticking) return; ticking = true;
-        requestAnimationFrame(() => {
-            const y = window.scrollY;
-            if (y > lastY && y > 80) {
-                // scrolling down
-                header.style.transform = 'translateY(-100%)';
-                header.style.transition = 'transform 0.25s ease';
-            } else {
-                header.style.transform = '';
-            }
-            lastY = y;
-            ticking = false;
-        });
-    }, { passive: true });
-}
-
-function enhanceMobileSearch() {
-    const searchInput = document.querySelector('.search-input, input[placeholder*="search" i], input[type="search"]');
-    if (!searchInput) return;
-    
-    // Add clear button
-    const wrapper = searchInput.parentElement;
-    if (wrapper && !wrapper.querySelector('.search-clear')) {
-        const clearBtn = document.createElement('button');
-        clearBtn.className = 'search-clear';
-        clearBtn.innerHTML = '✕';
-        clearBtn.type = 'button';
-        clearBtn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0;';
-        clearBtn.onclick = () => {
-            searchInput.value = '';
-            searchInput.focus();
-            filterTools('', getActiveCategory());
-            clearBtn.style.display = 'none';
-        };
-        
-        wrapper.style.position = 'relative';
-        wrapper.appendChild(clearBtn);
-        
-        searchInput.addEventListener('input', () => {
-            clearBtn.style.display = searchInput.value ? 'block' : 'none';
-        });
-    }
-}
-
-// FEATURE 3: Quick Actions
-function initQuickActions() {
-    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-        addQuickActionButtons();
-    }
-}
-
-function addQuickActionButtons() {
-    if (document.querySelector('[data-smart-section="quick-actions"]')) return;
-    
-    const section = document.createElement('section');
-    section.setAttribute('data-smart-section', 'quick-actions');
-    section.style.cssText = `
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 0.75rem;
-        margin: 1.5rem 0;
-        padding: 1rem;
-        background: var(--bg-elevated);
-        border-radius: 12px;
-        border: 1px solid var(--border-subtle);
-    `;
-    
-    const actions = [
-        { icon: '🎨', label: 'Image Tools', category: 'image' },
-        { icon: '📄', label: 'PDF Tools', category: 'pdf' },
-        { icon: '🤖', label: 'AI Tools', category: 'ai' },
-        { icon: '⚙️', label: 'Utilities', category: 'utility' },
-        { icon: '🎵', label: 'Audio/Video', category: 'audio-video' }
-    ];
-    
-    actions.forEach(action => {
-        const btn = document.createElement('button');
-        btn.className = 'quick-action-btn';
-        btn.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            background: var(--bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: inherit;
-            font-size: 0.85rem;
-            font-weight: 500;
-            min-height: 80px;
-            justify-content: center;
-        `;
-        btn.innerHTML = `<div style="font-size: 1.5rem;">${action.icon}</div><div>${action.label}</div>`;
-        btn.onclick = () => {
-            const searchInput = document.getElementById('search-tools');
-            if (searchInput) {
-                searchInput.value = '';
-                filterTools('', action.category);
-            }
-        };
-        btn.onmouseover = () => btn.style.cssText += 'border-color: var(--accent-blue); transform: translateY(-2px);';
-        section.appendChild(btn);
-    });
-    
-    const mainContent = document.querySelector('main, .main-content');
-    if (mainContent) {
-        mainContent.insertBefore(section, mainContent.firstChild);
-    }
-}
-
-// FEATURE 4: Track User Behavior
-function trackUserBehavior() {
-    // Track which tools users visit and when
-    document.addEventListener('click', (e) => {
-        const toolLink = e.target.closest('a[href*="/tools/"]');
-        if (toolLink) {
-            const toolPath = toolLink.href;
-            try {
-                const lastClicks = JSON.parse(localStorage.getItem('qn_tool_clicks') || '{}');
-                lastClicks[toolPath] = Date.now();
-                localStorage.setItem('qn_tool_clicks', JSON.stringify(lastClicks));
-            } catch (e) {
-                console.warn('Could not track tool click:', e);
-            }
-        }
-    });
-    
-    // Track time spent on page
-    let timeOnPage = 0;
-    setInterval(() => {
-        if (document.hidden) return;
-        timeOnPage++;
-        if (timeOnPage % 30 === 0) { // Save every 30 seconds
-            try {
-                const toolVisit = window.location.pathname;
-                const visits = JSON.parse(localStorage.getItem('qn_visits_stats') || '{}');
-                visits[toolVisit] = (visits[toolVisit] || 0) + 30;
-                localStorage.setItem('qn_visits_stats', JSON.stringify(visits));
-            } catch (e) {
-                console.warn('Could not track time spent:', e);
-            }
-        }
-    }, 1000);
-}
-
 // --- Mobile Menu ---
 function initMobileMenu() {
-    // Enhanced mobile menu with smooth animations
+    // Basic toggle for now - could be expanded
     const btn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav-links');
-    
-    if (!btn || !nav) return;
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.mobile-menu-btn') && !e.target.closest('.nav-links')) {
-            nav.classList.remove('active');
-            nav.style.maxHeight = '0';
-        }
-    });
-    
-    // Toggle menu on button click
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isActive = nav.classList.contains('active');
-        
-        if (isActive) {
-            nav.classList.remove('active');
-            nav.style.maxHeight = '0';
-        } else {
-            nav.classList.add('active');
-            nav.style.maxHeight = nav.scrollHeight + 'px';
-        }
-    });
-    
-    // Close menu when clicking on a link
-    nav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            nav.classList.remove('active');
-            nav.style.maxHeight = '0';
-        });
-    });
-    
-    // Update menu height on window resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            if (nav.classList.contains('active')) {
-                nav.style.maxHeight = nav.scrollHeight + 'px';
+    if (btn && nav) {
+        btn.addEventListener('click', () => {
+            const isFlex = nav.style.display === 'flex';
+            nav.style.display = isFlex ? 'none' : 'flex';
+            if (!isFlex) {
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '70px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'var(--bg-elevated)';
+                nav.style.padding = '1rem';
+                nav.style.boxShadow = 'var(--shadow-soft)';
+            } else {
+                nav.style.position = '';
+                nav.style.top = '';
+                nav.style.width = '';
             }
-        }, 250);
-    });
+        });
+    }
 }
 
 // --- Tools Grid & Filtering ---
@@ -1126,145 +644,6 @@ function initPWA() {
     }
 }
 
-// Dynamic metadata for tool pages using toolsData
-function initDynamicMeta() {
-    try {
-        const path = window.location.pathname;
-        // normalize links in toolsData (they may start with /tools/)
-        const tool = toolsData && toolsData.find(t => t.link && (t.link === path || t.link === path.replace(/\/g, '/')));
-        if (!tool) return;
-
-        // Title
-        document.title = `${tool.name} — QuickNova`;
-
-        // Description
-        let descMeta = document.querySelector('meta[name="description"]');
-        if (!descMeta) {
-            descMeta = document.createElement('meta');
-            descMeta.name = 'description';
-            document.head.appendChild(descMeta);
-        }
-        descMeta.content = tool.desc || 'QuickNova tool';
-
-        // Open Graph
-        const ogTitle = ensureMeta('property', 'og:title');
-        ogTitle.content = `${tool.name} — QuickNova`;
-        const ogDesc = ensureMeta('property', 'og:description');
-        ogDesc.content = tool.desc || '';
-        const ogUrl = ensureMeta('property', 'og:url');
-        ogUrl.content = window.location.href;
-        const ogImage = ensureMeta('property', 'og:image');
-        ogImage.content = tool.image || (window.location.origin + '/assets/og-image.jpg');
-
-        // Twitter card
-        const twCard = ensureMeta('name', 'twitter:card');
-        twCard.content = 'summary_large_image';
-        const twTitle = ensureMeta('name', 'twitter:title');
-        twTitle.content = `${tool.name} — QuickNova`;
-        const twDesc = ensureMeta('name', 'twitter:description');
-        twDesc.content = tool.desc || '';
-        const twImage = ensureMeta('name', 'twitter:image');
-        twImage.content = tool.image || (window.location.origin + '/assets/og-image.jpg');
-
-        // JSON-LD structured data for tool
-        const ld = document.createElement('script');
-        ld.type = 'application/ld+json';
-        ld.id = 'qn-tool-schema';
-        ld.text = JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": tool.name,
-            "url": window.location.href,
-            "description": tool.desc,
-            "applicationCategory": tool.category || 'Tools',
-            "image": tool.image || (window.location.origin + '/assets/og-image.jpg')
-        });
-        document.head.appendChild(ld);
-    } catch (e) {
-        console.warn('Dynamic meta error', e);
-    }
-}
-
-function ensureMeta(attrName, attrValue) {
-    let sel;
-    if (attrName === 'property') sel = `meta[property="${attrValue}"]`;
-    else sel = `meta[name="${attrValue}"]`;
-    let m = document.head.querySelector(sel);
-    if (!m) {
-        m = document.createElement('meta');
-        if (attrName === 'property') m.setAttribute('property', attrValue);
-        else m.name = attrValue;
-        document.head.appendChild(m);
-    }
-    return m;
-}
-
-// Referral system (consent-first, opt-in)
-function initReferral() {
-    try {
-        const existing = localStorage.getItem('qn_referral_code');
-        if (existing) return; // already generated
-        // gentle prompt after a delay
-        setTimeout(() => {
-            showReferralBanner();
-        }, 3000);
-    } catch (e) { console.warn('Referral init error', e); }
-}
-
-function showReferralBanner() {
-    if (document.getElementById('qn-ref-banner')) return;
-    const banner = document.createElement('div');
-    banner.id = 'qn-ref-banner';
-    banner.style.cssText = 'position:fixed;bottom:18px;left:18px;right:18px;z-index:99998;background:var(--bg-elevated);padding:12px;border-radius:10px;border:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px;';
-    banner.innerHTML = `
-        <div style="flex:1;font-size:0.95rem;color:var(--text-main);">Invite friends and earn rewards — create your referral code?</div>
-        <div style="display:flex;gap:8px;">
-            <button id="qn-ref-create" class="btn btn-primary">Create Code</button>
-            <button id="qn-ref-dismiss" class="btn btn-secondary">Dismiss</button>
-        </div>
-    `;
-    document.body.appendChild(banner);
-    document.getElementById('qn-ref-dismiss').addEventListener('click', () => banner.remove());
-    document.getElementById('qn-ref-create').addEventListener('click', () => {
-        const code = 'qn-' + Math.random().toString(36).slice(2, 9);
-        try { localStorage.setItem('qn_referral_code', code); } catch (e) {}
-        banner.remove();
-        showToast && showToast('Referral code created: ' + code, 'success');
-    });
-}
-
-// Share templates - append referral and UTM when present
-function initShareTemplates() {
-    try {
-        const ref = localStorage.getItem('qn_referral_code');
-        // patch existing social share buttons if present
-        const socialBtns = document.querySelectorAll('.social-share-float button');
-        socialBtns.forEach(btn => {
-            const old = btn.onclick;
-            btn.onclick = function(e) {
-                // build shared url
-                const base = window.location.href.split('#')[0];
-                const url = new URL(base);
-                if (ref) url.searchParams.set('ref', ref);
-                url.searchParams.set('utm_source', 'share');
-                // call original handler with modified URL if it uses window.open
-                if (this.title && this.title.toLowerCase().includes('whatsapp')) {
-                    window.open(`https://wa.me/?text=${encodeURIComponent(url.toString())}`,'_blank');
-                    if (window.gtag) gtag('event','share',{method:'whatsapp'});
-                    return;
-                }
-                if (this.title && this.title.toLowerCase().includes('telegram')) {
-                    window.open(`https://t.me/share/url?url=${encodeURIComponent(url.toString())}`,'_blank');
-                    if (window.gtag) gtag('event','share',{method:'telegram'});
-                    return;
-                }
-                // fallback to original
-                if (typeof old === 'function') old();
-            };
-        });
-    } catch (e) { console.warn('Share templates error', e); }
-}
-
 function initSmartNudge() {
     // Only on tool pages
     if (!window.location.pathname.includes('/tools/')) return;
@@ -1372,11 +751,7 @@ function initShareUI() {
     });
     copyBtn.addEventListener('click', async () => {
         try {
-            // append referral if exists
-            const ref = (function(){ try{ return localStorage.getItem('qn_referral_code'); }catch(e){return null;} })();
-            const full = new URL(url.toString());
-            if (ref) full.searchParams.set('ref', ref);
-            await navigator.clipboard.writeText(full.toString());
+            await navigator.clipboard.writeText(url.toString());
             if (window.gtag) gtag('event', 'copy_link', { page: window.location.pathname });
             if (typeof showToast !== 'undefined') showToast('Link copied to clipboard', 'info');
         } catch(e) {}
@@ -1405,21 +780,6 @@ function initToolSchema() {
     s.text = JSON.stringify(schema);
     document.head.appendChild(s);
 }
-
-// Handle referral query param on landing
-(function handleReferralParam(){
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const ref = params.get('ref');
-        if (!ref) return;
-        // store the ref for later attribution
-        try { localStorage.setItem('qn_last_ref', ref); } catch (e) {}
-        // Optionally show a subtle thank you
-        setTimeout(() => {
-            if (typeof showToast !== 'undefined') showToast('Thanks for visiting via referral!', 'info');
-        }, 1200);
-    } catch (e) {}
-})();
 
 function initTrending() {
     const grid = document.getElementById('trending-tools');
@@ -1506,7 +866,7 @@ function initSocialShare() {
     whatsappBtn.onclick = () => {
         const url = encodeURIComponent(window.location.href + '?utm_source=whatsapp&utm_medium=share&utm_campaign=social');
         window.open(`https://wa.me/?text=${url}`, '_blank');
-        if (window.gtag) gtag('event', 'share', { method: 'whatsapp' });
+        gtag('event', 'share', { method: 'whatsapp' });
     };
     
     const telegramBtn = document.createElement('button');
@@ -1516,7 +876,7 @@ function initSocialShare() {
     telegramBtn.onclick = () => {
         const url = encodeURIComponent(window.location.href + '?utm_source=telegram&utm_medium=share&utm_campaign=social');
         window.open(`https://t.me/share/url?url=${url}`, '_blank');
-        if (window.gtag) gtag('event', 'share', { method: 'telegram' });
+        gtag('event', 'share', { method: 'telegram' });
     };
     
     shareContainer.appendChild(whatsappBtn);
@@ -1561,7 +921,7 @@ function initEmailShare() {
         const subject = encodeURIComponent('Check out this amazing tool!');
         const body = encodeURIComponent(`Hey! I found this awesome tool that you might like: ${url}`);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        if (window.gtag) gtag('event', 'share', { method: 'email' });
+        gtag('event', 'share', { method: 'email' });
     };
     
     const shareContainer = document.querySelector('.social-share-float');
