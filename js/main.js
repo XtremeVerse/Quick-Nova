@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnalytics();
     initTheme();
     initMobileMenu();
+    initSmartFeatures();
     initToolsGrid();
     initSearchAndFilter();
     initStreak();
@@ -295,7 +296,10 @@ function initAds() {
     }
     // INSTANT popunder on load
     if (!ads.optOut) {
-        ads.load('POPUNDER');
+        // Avoid intrusive popunder on mobile devices
+        if (!isMobile) {
+            ads.load('POPUNDER');
+        }
     }
     if (footerSlot) {
         const a = document.createElement('a');
@@ -382,31 +386,359 @@ function updateThemeIcon(isDark) {
     }
 }
 
-// --- Mobile Menu ---
-function initMobileMenu() {
-    // Basic toggle for now - could be expanded
-    const btn = document.querySelector('.mobile-menu-btn');
-    const nav = document.querySelector('.nav-links');
-    if (btn && nav) {
-        btn.addEventListener('click', () => {
-            const isFlex = nav.style.display === 'flex';
-            nav.style.display = isFlex ? 'none' : 'flex';
-            if (!isFlex) {
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '70px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = 'var(--bg-elevated)';
-                nav.style.padding = '1rem';
-                nav.style.boxShadow = 'var(--shadow-soft)';
+// ===== SMART FEATURES SYSTEM =====
+function initSmartFeatures() {
+    // 1. Smart Tool Recommendations Based on User History
+    initSmartRecommendations();
+    
+    // 2. Mobile-Specific Smart Features
+    if (isMobileView()) {
+        initMobileSmartFeatures();
+    }
+    
+    // 3. Context-aware Quick Actions
+    initQuickActions();
+    
+    // 4. User Behavior Analytics
+    trackUserBehavior();
+}
+
+function isMobileView() {
+    return window.innerWidth <= 768;
+}
+
+// FEATURE 1: Smart Recommendations
+function initSmartRecommendations() {
+    const container = document.querySelector('.hero, .home-hero, main > section:first-child, .tools-container');
+    if (!container) return;
+    
+    // Get user history and favorites
+    let recentTools = getRecent();
+    let favTools = getFavorites();
+    
+    if (recentTools.length === 0 && favTools.length === 0) {
+        // New user - show trending instead
+        suggestTrendingTools();
+    } else {
+        // Suggest related tools based on usage
+        suggestRelatedTools(recentTools, favTools);
+    }
+}
+
+function suggestTrendingTools() {
+    if (document.querySelector('[data-smart-section="trending"]')) return;
+    
+    const trendingTools = toolsData.filter(t => t.badges && t.badges.includes('popular'));
+    if (trendingTools.length === 0) return;
+    
+    const section = document.createElement('section');
+    section.setAttribute('data-smart-section', 'trending');
+    section.style.cssText = 'margin: 2rem 0; padding: 1.5rem; background: var(--bg-elevated); border-radius: 12px; border: 1px solid var(--border-subtle);';
+    
+    section.innerHTML = `
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">🔥</span> Trending Tools
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Tools loved by thousands of users</p>
+        <div id="trending-quick-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;"></div>
+    `;
+    
+    const mainContent = document.querySelector('main, .main-content');
+    if (mainContent) {
+        mainContent.insertBefore(section, mainContent.firstChild);
+    }
+    
+    const grid = section.querySelector('#trending-quick-grid');
+    trendingTools.slice(0, 6).forEach(tool => {
+        const card = document.createElement('a');
+        card.href = tool.link;
+        card.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; background: var(--bg); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.3s ease; border: 1px solid transparent;';
+        card.innerHTML = `<div style="font-size: 2rem;">${tool.icon}</div><span style="font-size: 0.75rem; text-align: center; font-weight: 500;">${tool.name}</span>`;
+        card.onmouseover = () => card.style.cssText += 'border-color: var(--accent-blue); transform: translateY(-2px);';
+        card.onmouseout = () => card.style.cssText = card.style.cssText.replace('border-color: var(--accent-blue); transform: translateY(-2px);', '');
+        grid.appendChild(card);
+    });
+}
+
+function suggestRelatedTools(recentTools, favTools) {
+    const allUsedIds = [...new Set([...recentTools, ...favTools])];
+    if (allUsedIds.length === 0) return;
+    
+    // Get category of most recent tools
+    const usedTools = toolsData.filter(t => allUsedIds.includes(t.id));
+    const categories = [...new Set(usedTools.map(t => t.category))];
+    
+    // Find related tools in same categories
+    const relatedTools = toolsData.filter(t => 
+        !allUsedIds.includes(t.id) && categories.includes(t.category)
+    ).slice(0, 4);
+    
+    if (relatedTools.length === 0) return;
+    
+    const section = document.createElement('section');
+    section.setAttribute('data-smart-section', 'recommendations');
+    section.style.cssText = 'margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, var(--bg-elevated), var(--bg)); border-radius: 12px; border: 1px solid var(--border-subtle);';
+    
+    section.innerHTML = `
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">💡</span> Recommended For You
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Based on your recent activity</p>
+        <div id="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;"></div>
+    `;
+    
+    const mainContent = document.querySelector('main, .main-content');
+    if (mainContent) {
+        mainContent.insertBefore(section, mainContent.firstChild);
+    }
+    
+    const grid = section.querySelector('#recommendations-grid');
+    relatedTools.forEach(tool => {
+        const card = document.createElement('a');
+        card.href = tool.link;
+        card.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; background: var(--bg); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.3s ease; border: 1px solid var(--accent-blue);';
+        card.innerHTML = `<div style="font-size: 2rem;">${tool.icon}</div><span style="font-size: 0.75rem; text-align: center; font-weight: 500;">${tool.name}</span>`;
+        grid.appendChild(card);
+    });
+}
+
+// FEATURE 2: Mobile-Specific Smart Features
+function initMobileSmartFeatures() {
+    // Add touch-friendly spacing
+    const toolCards = document.querySelectorAll('.tool-card');
+    toolCards.forEach(card => {
+        card.style.minHeight = '280px';
+        card.style.padding = '1.25rem';
+        
+        // Make buttons bigger on mobile
+        const buttons = card.querySelectorAll('a.btn, button.btn');
+        buttons.forEach(btn => {
+            btn.style.padding = '0.75rem 1rem';
+            btn.style.minHeight = '44px'; // iOS recommended touch target
+            btn.style.display = 'flex';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+        });
+    });
+    
+    // Add swipe gestures
+    enableSwipeGestures();
+    
+    // Add tap-friendly search
+    enhanceMobileSearch();
+}
+
+function enableSwipeGestures() {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, false);
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swiped left
+                const nav = document.querySelector('.nav-links');
+                if (nav) nav.style.display = 'none';
             } else {
-                nav.style.position = '';
-                nav.style.top = '';
-                nav.style.width = '';
+                // Swiped right
+                const nav = document.querySelector('.nav-links');
+                if (nav && isMobileView()) nav.style.display = 'flex';
             }
+        }
+    }
+}
+
+function enhanceMobileSearch() {
+    const searchInput = document.querySelector('.search-input, input[placeholder*="search" i], input[type="search"]');
+    if (!searchInput) return;
+    
+    // Add clear button
+    const wrapper = searchInput.parentElement;
+    if (wrapper && !wrapper.querySelector('.search-clear')) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'search-clear';
+        clearBtn.innerHTML = '✕';
+        clearBtn.type = 'button';
+        clearBtn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0;';
+        clearBtn.onclick = () => {
+            searchInput.value = '';
+            searchInput.focus();
+            filterTools('', getActiveCategory());
+            clearBtn.style.display = 'none';
+        };
+        
+        wrapper.style.position = 'relative';
+        wrapper.appendChild(clearBtn);
+        
+        searchInput.addEventListener('input', () => {
+            clearBtn.style.display = searchInput.value ? 'block' : 'none';
         });
     }
+}
+
+// FEATURE 3: Quick Actions
+function initQuickActions() {
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        addQuickActionButtons();
+    }
+}
+
+function addQuickActionButtons() {
+    if (document.querySelector('[data-smart-section="quick-actions"]')) return;
+    
+    const section = document.createElement('section');
+    section.setAttribute('data-smart-section', 'quick-actions');
+    section.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--bg-elevated);
+        border-radius: 12px;
+        border: 1px solid var(--border-subtle);
+    `;
+    
+    const actions = [
+        { icon: '🎨', label: 'Image Tools', category: 'image' },
+        { icon: '📄', label: 'PDF Tools', category: 'pdf' },
+        { icon: '🤖', label: 'AI Tools', category: 'ai' },
+        { icon: '⚙️', label: 'Utilities', category: 'utility' },
+        { icon: '🎵', label: 'Audio/Video', category: 'audio-video' }
+    ];
+    
+    actions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-action-btn';
+        btn.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-height: 80px;
+            justify-content: center;
+        `;
+        btn.innerHTML = `<div style="font-size: 1.5rem;">${action.icon}</div><div>${action.label}</div>`;
+        btn.onclick = () => {
+            const searchInput = document.getElementById('search-tools');
+            if (searchInput) {
+                searchInput.value = '';
+                filterTools('', action.category);
+            }
+        };
+        btn.onmouseover = () => btn.style.cssText += 'border-color: var(--accent-blue); transform: translateY(-2px);';
+        section.appendChild(btn);
+    });
+    
+    const mainContent = document.querySelector('main, .main-content');
+    if (mainContent) {
+        mainContent.insertBefore(section, mainContent.firstChild);
+    }
+}
+
+// FEATURE 4: Track User Behavior
+function trackUserBehavior() {
+    // Track which tools users visit and when
+    document.addEventListener('click', (e) => {
+        const toolLink = e.target.closest('a[href*="/tools/"]');
+        if (toolLink) {
+            const toolPath = toolLink.href;
+            try {
+                const lastClicks = JSON.parse(localStorage.getItem('qn_tool_clicks') || '{}');
+                lastClicks[toolPath] = Date.now();
+                localStorage.setItem('qn_tool_clicks', JSON.stringify(lastClicks));
+            } catch (e) {
+                console.warn('Could not track tool click:', e);
+            }
+        }
+    });
+    
+    // Track time spent on page
+    let timeOnPage = 0;
+    setInterval(() => {
+        if (document.hidden) return;
+        timeOnPage++;
+        if (timeOnPage % 30 === 0) { // Save every 30 seconds
+            try {
+                const toolVisit = window.location.pathname;
+                const visits = JSON.parse(localStorage.getItem('qn_visits_stats') || '{}');
+                visits[toolVisit] = (visits[toolVisit] || 0) + 30;
+                localStorage.setItem('qn_visits_stats', JSON.stringify(visits));
+            } catch (e) {
+                console.warn('Could not track time spent:', e);
+            }
+        }
+    }, 1000);
+}
+
+// --- Mobile Menu ---
+function initMobileMenu() {
+    // Enhanced mobile menu with smooth animations
+    const btn = document.querySelector('.mobile-menu-btn');
+    const nav = document.querySelector('.nav-links');
+    
+    if (!btn || !nav) return;
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.mobile-menu-btn') && !e.target.closest('.nav-links')) {
+            nav.classList.remove('active');
+            nav.style.maxHeight = '0';
+        }
+    });
+    
+    // Toggle menu on button click
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = nav.classList.contains('active');
+        
+        if (isActive) {
+            nav.classList.remove('active');
+            nav.style.maxHeight = '0';
+        } else {
+            nav.classList.add('active');
+            nav.style.maxHeight = nav.scrollHeight + 'px';
+        }
+    });
+    
+    // Close menu when clicking on a link
+    nav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            nav.classList.remove('active');
+            nav.style.maxHeight = '0';
+        });
+    });
+    
+    // Update menu height on window resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (nav.classList.contains('active')) {
+                nav.style.maxHeight = nav.scrollHeight + 'px';
+            }
+        }, 250);
+    });
 }
 
 // --- Tools Grid & Filtering ---
