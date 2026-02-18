@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    initAnalytics();
+    // Consent-first: show consent banner and initialize analytics/ads only after user grants permission
     initTheme();
     initMobileMenu();
     initSmartFeatures();
@@ -15,8 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initTrending();
     initInvite();
     initHomeShareNudge();
-    // Initialize ads after all DOM elements are in place
-    setTimeout(() => initAds(), 100);
+
+    initConsentBanner();
+    // Dynamic meta and referral systems
+    initDynamicMeta();
+    initReferral();
+    initShareTemplates();
 });
 
 function initAnalytics() {
@@ -29,6 +33,58 @@ function initAnalytics() {
     window.gtag = function(){ dataLayer.push(arguments); };
     gtag('js', new Date());
     gtag('config', 'G-88T5VL450S');
+}
+
+// Consent banner: must be called on DOMContentLoaded
+function initConsentBanner() {
+    try {
+        const stored = localStorage.getItem('qn_consent');
+        if (stored === 'granted') {
+            initAnalytics();
+            // Small delay to ensure DOM ready for ad insertion
+            setTimeout(() => initAds(), 200);
+            return;
+        }
+        if (stored === 'denied') {
+            // Respect denial: set ads opt-out
+            try { localStorage.setItem('qn_ads_optout', '1'); } catch(e){}
+            return;
+        }
+    } catch (e) {
+        console.warn('Consent read error', e);
+    }
+
+    // Create banner
+    const banner = document.createElement('div');
+    banner.id = 'consent-banner';
+    banner.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;z-index:99999;background:var(--bg-elevated);border:1px solid var(--border-subtle);padding:12px;border-radius:10px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow-soft);';
+    banner.innerHTML = `
+        <div style="flex:1;">
+            <strong>Privacy & Analytics</strong>
+            <div style="color:var(--text-muted);font-size:0.95rem;margin-top:4px;">We use analytics and ads to keep QuickNova free. Do you allow anonymous analytics and non-intrusive ads?</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <button id="consent-accept" class="btn btn-primary">Allow</button>
+            <button id="consent-decline" class="btn btn-secondary">Decline</button>
+            <a href="/privacy.html" style="color:var(--text-muted);font-size:0.9rem;margin-left:8px;">Privacy</a>
+        </div>
+    `;
+    document.body.appendChild(banner);
+
+    document.getElementById('consent-accept').addEventListener('click', () => {
+        try { localStorage.setItem('qn_consent', 'granted'); } catch (e) {}
+        // Initialize analytics and ads
+        initAnalytics();
+        setTimeout(() => initAds(), 200);
+        banner.remove();
+    });
+
+    document.getElementById('consent-decline').addEventListener('click', () => {
+        try { localStorage.setItem('qn_consent', 'denied'); localStorage.setItem('qn_ads_optout','1'); } catch (e) {}
+        // Ensure ads hidden
+        document.querySelectorAll('.ad-slot').forEach(el => el.style.display = 'none');
+        banner.remove();
+    });
 }
 
 function initAds() {
@@ -976,6 +1032,145 @@ function initPWA() {
     }
 }
 
+// Dynamic metadata for tool pages using toolsData
+function initDynamicMeta() {
+    try {
+        const path = window.location.pathname;
+        // normalize links in toolsData (they may start with /tools/)
+        const tool = toolsData && toolsData.find(t => t.link && (t.link === path || t.link === path.replace(/\/g, '/')));
+        if (!tool) return;
+
+        // Title
+        document.title = `${tool.name} — QuickNova`;
+
+        // Description
+        let descMeta = document.querySelector('meta[name="description"]');
+        if (!descMeta) {
+            descMeta = document.createElement('meta');
+            descMeta.name = 'description';
+            document.head.appendChild(descMeta);
+        }
+        descMeta.content = tool.desc || 'QuickNova tool';
+
+        // Open Graph
+        const ogTitle = ensureMeta('property', 'og:title');
+        ogTitle.content = `${tool.name} — QuickNova`;
+        const ogDesc = ensureMeta('property', 'og:description');
+        ogDesc.content = tool.desc || '';
+        const ogUrl = ensureMeta('property', 'og:url');
+        ogUrl.content = window.location.href;
+        const ogImage = ensureMeta('property', 'og:image');
+        ogImage.content = tool.image || (window.location.origin + '/assets/og-image.jpg');
+
+        // Twitter card
+        const twCard = ensureMeta('name', 'twitter:card');
+        twCard.content = 'summary_large_image';
+        const twTitle = ensureMeta('name', 'twitter:title');
+        twTitle.content = `${tool.name} — QuickNova`;
+        const twDesc = ensureMeta('name', 'twitter:description');
+        twDesc.content = tool.desc || '';
+        const twImage = ensureMeta('name', 'twitter:image');
+        twImage.content = tool.image || (window.location.origin + '/assets/og-image.jpg');
+
+        // JSON-LD structured data for tool
+        const ld = document.createElement('script');
+        ld.type = 'application/ld+json';
+        ld.id = 'qn-tool-schema';
+        ld.text = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": tool.name,
+            "url": window.location.href,
+            "description": tool.desc,
+            "applicationCategory": tool.category || 'Tools',
+            "image": tool.image || (window.location.origin + '/assets/og-image.jpg')
+        });
+        document.head.appendChild(ld);
+    } catch (e) {
+        console.warn('Dynamic meta error', e);
+    }
+}
+
+function ensureMeta(attrName, attrValue) {
+    let sel;
+    if (attrName === 'property') sel = `meta[property="${attrValue}"]`;
+    else sel = `meta[name="${attrValue}"]`;
+    let m = document.head.querySelector(sel);
+    if (!m) {
+        m = document.createElement('meta');
+        if (attrName === 'property') m.setAttribute('property', attrValue);
+        else m.name = attrValue;
+        document.head.appendChild(m);
+    }
+    return m;
+}
+
+// Referral system (consent-first, opt-in)
+function initReferral() {
+    try {
+        const existing = localStorage.getItem('qn_referral_code');
+        if (existing) return; // already generated
+        // gentle prompt after a delay
+        setTimeout(() => {
+            showReferralBanner();
+        }, 3000);
+    } catch (e) { console.warn('Referral init error', e); }
+}
+
+function showReferralBanner() {
+    if (document.getElementById('qn-ref-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'qn-ref-banner';
+    banner.style.cssText = 'position:fixed;bottom:18px;left:18px;right:18px;z-index:99998;background:var(--bg-elevated);padding:12px;border-radius:10px;border:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px;';
+    banner.innerHTML = `
+        <div style="flex:1;font-size:0.95rem;color:var(--text-main);">Invite friends and earn rewards — create your referral code?</div>
+        <div style="display:flex;gap:8px;">
+            <button id="qn-ref-create" class="btn btn-primary">Create Code</button>
+            <button id="qn-ref-dismiss" class="btn btn-secondary">Dismiss</button>
+        </div>
+    `;
+    document.body.appendChild(banner);
+    document.getElementById('qn-ref-dismiss').addEventListener('click', () => banner.remove());
+    document.getElementById('qn-ref-create').addEventListener('click', () => {
+        const code = 'qn-' + Math.random().toString(36).slice(2, 9);
+        try { localStorage.setItem('qn_referral_code', code); } catch (e) {}
+        banner.remove();
+        showToast && showToast('Referral code created: ' + code, 'success');
+    });
+}
+
+// Share templates - append referral and UTM when present
+function initShareTemplates() {
+    try {
+        const ref = localStorage.getItem('qn_referral_code');
+        // patch existing social share buttons if present
+        const socialBtns = document.querySelectorAll('.social-share-float button');
+        socialBtns.forEach(btn => {
+            const old = btn.onclick;
+            btn.onclick = function(e) {
+                // build shared url
+                const base = window.location.href.split('#')[0];
+                const url = new URL(base);
+                if (ref) url.searchParams.set('ref', ref);
+                url.searchParams.set('utm_source', 'share');
+                // call original handler with modified URL if it uses window.open
+                if (this.title && this.title.toLowerCase().includes('whatsapp')) {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(url.toString())}`,'_blank');
+                    if (window.gtag) gtag('event','share',{method:'whatsapp'});
+                    return;
+                }
+                if (this.title && this.title.toLowerCase().includes('telegram')) {
+                    window.open(`https://t.me/share/url?url=${encodeURIComponent(url.toString())}`,'_blank');
+                    if (window.gtag) gtag('event','share',{method:'telegram'});
+                    return;
+                }
+                // fallback to original
+                if (typeof old === 'function') old();
+            };
+        });
+    } catch (e) { console.warn('Share templates error', e); }
+}
+
 function initSmartNudge() {
     // Only on tool pages
     if (!window.location.pathname.includes('/tools/')) return;
@@ -1198,7 +1393,7 @@ function initSocialShare() {
     whatsappBtn.onclick = () => {
         const url = encodeURIComponent(window.location.href + '?utm_source=whatsapp&utm_medium=share&utm_campaign=social');
         window.open(`https://wa.me/?text=${url}`, '_blank');
-        gtag('event', 'share', { method: 'whatsapp' });
+        if (window.gtag) gtag('event', 'share', { method: 'whatsapp' });
     };
     
     const telegramBtn = document.createElement('button');
@@ -1208,7 +1403,7 @@ function initSocialShare() {
     telegramBtn.onclick = () => {
         const url = encodeURIComponent(window.location.href + '?utm_source=telegram&utm_medium=share&utm_campaign=social');
         window.open(`https://t.me/share/url?url=${url}`, '_blank');
-        gtag('event', 'share', { method: 'telegram' });
+        if (window.gtag) gtag('event', 'share', { method: 'telegram' });
     };
     
     shareContainer.appendChild(whatsappBtn);
@@ -1253,7 +1448,7 @@ function initEmailShare() {
         const subject = encodeURIComponent('Check out this amazing tool!');
         const body = encodeURIComponent(`Hey! I found this awesome tool that you might like: ${url}`);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        gtag('event', 'share', { method: 'email' });
+        if (window.gtag) gtag('event', 'share', { method: 'email' });
     };
     
     const shareContainer = document.querySelector('.social-share-float');
