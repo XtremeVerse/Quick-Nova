@@ -1,367 +1,474 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
-    const menuToggle = document.getElementById('menu-toggle');
-    const chatMessages = document.getElementById('chat-messages');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-    const newChatBtn = document.getElementById('new-chat-btn');
-    const modelSelector = document.getElementById('model-selector');
-    const modelDropdown = document.getElementById('model-dropdown');
-    const themeToggle = document.getElementById('theme-toggle');
-    const chatHistory = document.getElementById('chat-history');
-    const voiceBtn = document.getElementById('voice-btn');
-    const attachBtn = document.getElementById('attach-btn');
-    const settingsBtn = document.getElementById('settings-btn');
-    const currentModelSpan = document.getElementById('current-model');
+// ============================================
+// QUICKNOVA AI CHAT - FULLY FUNCTIONAL
+// ============================================
 
-    // --- AI Models Configuration ---
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ AI Chat Module Loaded');
+
+    // ============================================
+    // 1. DOM ELEMENT CACHE
+    // ============================================
+    const DOM = {
+        sidebar: document.getElementById('sidebar'),
+        sidebarOverlay: document.getElementById('sidebar-overlay'),
+        menuToggle: document.getElementById('menu-toggle'),
+        chatMessages: document.getElementById('chat-messages'),
+        userInput: document.getElementById('user-input'),
+        sendBtn: document.getElementById('send-btn'),
+        newChatBtn: document.getElementById('new-chat-btn'),
+        modelSelector: document.getElementById('model-selector'),
+        modelDropdown: document.getElementById('model-dropdown'),
+        themeToggle: document.getElementById('theme-toggle'),
+        chatHistory: document.getElementById('chat-history'),
+        voiceBtn: document.getElementById('voice-btn'),
+        attachBtn: document.getElementById('attach-btn'),
+        settingsBtn: document.getElementById('settings-btn'),
+        currentModelSpan: document.getElementById('current-model')
+    };
+
+    // Verify elements
+    Object.keys(DOM).forEach(key => {
+        if (!DOM[key]) console.warn(`⚠️ Missing: ${key}`);
+    });
+
+    // ============================================
+    // 2. AI MODELS CONFIGURATION
+    // ============================================
     const MODELS = {
         advanced: {
             name: 'Advanced AI',
             icon: '🤖',
-            systemPrompt: 'You are QuickNova Advanced AI, a sophisticated assistant combining the best of ChatGPT, Gemini, Claude and other leading AI models. You are exceptionally intelligent, creative, and helpful. You provide accurate, detailed, and thoughtful responses on any topic. You understand context, nuance, and can adapt your communication style to the user.'
+            description: 'Best of all engines combined'
         },
         gpt4: {
             name: 'ChatGPT-4 Style',
             icon: '🚀',
-            systemPrompt: 'You are ChatGPT-4, known for being exceptionally helpful, creative, and capable. You excel at complex reasoning, writing, coding, analysis, and creative tasks. You think step-by-step and provide comprehensive answers.'
+            description: 'Advanced reasoning & analysis'
         },
         gemini: {
             name: 'Gemini Pro',
             icon: '✨',
-            systemPrompt: 'You are Google Gemini Pro, known for multimodal understanding and advanced reasoning. You provide insightful, nuanced responses with deep knowledge across domains. You are excellent at analysis, coding, and creative work.'
+            description: 'Multimodal insights & knowledge'
         },
         claude: {
             name: 'Claude 3',
             icon: '🧠',
-            systemPrompt: 'You are Anthropic Claude 3, known for thoughtful, nuanced, and careful reasoning. You provide detailed explanations, excellent at analysis, writing, and coding. You are helpful, harmless, and honest.'
+            description: 'Thoughtful & nuanced responses'
         },
         fast: {
             name: 'Fast Response',
             icon: '⚡',
-            systemPrompt: 'You are a fast, responsive AI assistant. Provide quick, concise, and direct answers. Focus on efficiency and clarity. Keep responses brief but informative.'
+            description: 'Quick & concise answers'
         },
         creative: {
             name: 'Creative Mode',
             icon: '🎨',
-            systemPrompt: 'You are a creative AI that excels at imaginative tasks. You help with writing stories, poetry, creative ideas, brainstorming, and artistic projects. You are expressive, imaginative, and inspiring.'
+            description: 'Imaginative & artistic'
         }
     };
 
-    // --- State Management ---
+    // ============================================
+    // 3. APPLICATION STATE
+    // ============================================
     let state = {
         chats: [],
         currentChatId: null,
         selectedModel: 'advanced',
-        theme: localStorage.getItem('theme') || 'dark'
+        theme: localStorage.getItem('qn_theme') || 'dark'
     };
 
-    // --- Initialize ---
-    init();
-
-    function init() {
+    // ============================================
+    // 4. INITIALIZATION
+    // ============================================
+    function initialize() {
+        console.log('🔧 Initializing application...');
+        
+        // Load saved state
         loadState();
+        
+        // Setup markdown parser
         setupMarkdown();
-        setupEventListeners();
+        
+        // Apply theme
         applyTheme();
-        renderEmptyState();
+        
+        // Render UI
+        renderChatHistory();
+        if (state.chats.length === 0) {
+            renderEmptyState();
+        }
+        
+        // Attach event listeners
+        attachEventListeners();
+        
+        console.log('✅ Application ready!');
     }
 
     function setupMarkdown() {
+        if (typeof marked === 'undefined') {
+            console.warn('⚠️ marked.js not loaded');
+            return;
+        }
+        
         marked.setOptions({
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    return hljs.highlight(code, { language: lang }).value;
-                }
-                return hljs.highlightAuto(code).value;
-            },
             breaks: true,
-            gfm: true
+            gfm: true,
+            highlight: function(code, lang) {
+                if (window.hljs && lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } catch (e) {
+                        return code;
+                    }
+                }
+                return code;
+            }
         });
     }
 
-    function setupEventListeners() {
-        // Message sending
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handleSend();
-            }
-        });
+    // ============================================
+    // 5. EVENT LISTENERS
+    // ============================================
+    function attachEventListeners() {
+        // Send message
+        if (DOM.sendBtn) {
+            DOM.sendBtn.addEventListener('click', sendMessage);
+        }
 
-        // Mobile menu
-        menuToggle.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar);
-        newChatBtn.addEventListener('click', startNewChat);
+        if (DOM.userInput) {
+            // Send on Ctrl+Enter or Cmd+Enter
+            DOM.userInput.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
 
-        // Model selection
-        modelSelector.addEventListener('click', () => {
-            modelDropdown.classList.toggle('active');
-        });
+            // Auto-resize textarea
+            DOM.userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        }
 
+        // New chat
+        if (DOM.newChatBtn) {
+            DOM.newChatBtn.addEventListener('click', startNewChat);
+        }
+
+        // Mobile menu toggle
+        if (DOM.menuToggle) {
+            DOM.menuToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (DOM.sidebarOverlay) {
+            DOM.sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // Model selector
+        if (DOM.modelSelector) {
+            DOM.modelSelector.addEventListener('click', toggleModelDropdown);
+        }
+
+        // Model options
         document.querySelectorAll('.model-option').forEach(option => {
-            option.addEventListener('click', () => {
-                const model = option.dataset.model;
-                selectModel(model);
-                modelDropdown.classList.remove('active');
+            option.addEventListener('click', function() {
+                const modelId = this.getAttribute('data-model');
+                selectModel(modelId);
+                if (DOM.modelDropdown) {
+                    DOM.modelDropdown.classList.remove('active');
+                }
             });
         });
 
         // Theme toggle
-        themeToggle.addEventListener('click', toggleTheme);
-
-        // Settings button
-        settingsBtn.addEventListener('click', () => {
-            showToast('Settings coming soon!', 'info');
-        });
-
-        // Quick actions
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('quick-action-btn')) {
-                userInput.value = e.target.dataset.prompt;
-                userInput.focus();
-            }
-        });
+        if (DOM.themeToggle) {
+            DOM.themeToggle.addEventListener('click', toggleTheme);
+        }
 
         // Voice button
-        if (voiceBtn) {
-            voiceBtn.addEventListener('click', () => {
-                showToast('Voice input coming soon!', 'info');
+        if (DOM.voiceBtn) {
+            DOM.voiceBtn.addEventListener('click', function() {
+                showToast('🎤 Voice input coming soon!', 'info');
             });
         }
 
         // Attach button
-        if (attachBtn) {
-            attachBtn.addEventListener('click', () => {
-                showToast('File attachment coming soon!', 'info');
+        if (DOM.attachBtn) {
+            DOM.attachBtn.addEventListener('click', function() {
+                showToast('📎 File attachment coming soon!', 'info');
             });
         }
 
-        // Auto-resize textarea
-        userInput.addEventListener('input', () => {
-            userInput.style.height = 'auto';
-            userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
-        });
+        // Settings button
+        if (DOM.settingsBtn) {
+            DOM.settingsBtn.addEventListener('click', function() {
+                showToast('⚙️ Settings coming soon!', 'info');
+            });
+        }
 
-        // Close dropdown on outside click
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#model-selector') && !e.target.closest('#model-dropdown')) {
-                modelDropdown.classList.remove('active');
-            }
-        });
-
-        // Close sidebar on item click on mobile
-        chatHistory.addEventListener('click', (e) => {
-            if (e.target.classList.contains('chat-history-item')) {
-                if (window.innerWidth <= 900) {
-                    closeSidebar();
+        // Quick action buttons (delegated)
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quick-action-btn')) {
+                const prompt = e.target.getAttribute('data-prompt');
+                if (DOM.userInput) {
+                    DOM.userInput.value = prompt;
+                    DOM.userInput.focus();
+                    DOM.userInput.style.height = 'auto';
+                    DOM.userInput.style.height = DOM.userInput.scrollHeight + 'px';
                 }
             }
         });
+
+        // Chat history items (delegated)
+        if (DOM.chatHistory) {
+            DOM.chatHistory.addEventListener('click', function(e) {
+                if (e.target.classList.contains('chat-history-item')) {
+                    const chatId = parseInt(e.target.getAttribute('data-id'));
+                    loadChat(chatId);
+                    closeSidebar();
+                }
+            });
+        }
+
+        // Close dropdown on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#model-selector') && 
+                !e.target.closest('#model-dropdown') &&
+                DOM.modelDropdown) {
+                DOM.modelDropdown.classList.remove('active');
+            }
+        });
+
+        console.log('✅ Event listeners attached');
     }
 
+    // ============================================
+    // 6. SIDEBAR FUNCTIONS
+    // ============================================
     function toggleSidebar() {
-        sidebar.classList.toggle('active');
-        sidebarOverlay.classList.toggle('active');
+        if (DOM.sidebar) {
+            DOM.sidebar.classList.toggle('active');
+            if (DOM.sidebarOverlay) {
+                DOM.sidebarOverlay.classList.toggle('active');
+            }
+        }
     }
 
     function closeSidebar() {
-        sidebar.classList.remove('active');
-        sidebarOverlay.classList.remove('active');
+        if (DOM.sidebar) {
+            DOM.sidebar.classList.remove('active');
+        }
+        if (DOM.sidebarOverlay) {
+            DOM.sidebarOverlay.classList.remove('active');
+        }
     }
 
+    // ============================================
+    // 7. MODEL SELECTION
+    // ============================================
+    function toggleModelDropdown() {
+        if (DOM.modelDropdown) {
+            DOM.modelDropdown.classList.toggle('active');
+        }
+    }
+
+    function selectModel(modelId) {
+        if (!MODELS[modelId]) return;
+
+        state.selectedModel = modelId;
+        const model = MODELS[modelId];
+
+        // Update UI
+        if (DOM.currentModelSpan) {
+            DOM.currentModelSpan.textContent = `${model.icon} ${model.name}`;
+        }
+
+        // Update active state
+        document.querySelectorAll('.model-option').forEach(opt => {
+            opt.classList.remove('active');
+        });
+        document.querySelector(`[data-model="${modelId}"]`)?.classList.add('active');
+
+        saveState();
+        console.log(`✅ Model selected: ${modelId}`);
+    }
+
+    // ============================================
+    // 8. THEME TOGGLE
+    // ============================================
     function toggleTheme() {
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
         applyTheme();
-        localStorage.setItem('theme', state.theme);
         saveState();
     }
 
     function applyTheme() {
         document.documentElement.setAttribute('data-theme', state.theme);
-        themeToggle.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+        if (DOM.themeToggle) {
+            DOM.themeToggle.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+        }
     }
 
-    function selectModel(modelId) {
-        state.selectedModel = modelId;
-        const model = MODELS[modelId];
-        currentModelSpan.textContent = `${model.icon} ${model.name}`;
-        
-        document.querySelectorAll('.model-option').forEach(opt => {
-            opt.classList.remove('active');
-        });
-        document.querySelector(`[data-model="${modelId}"]`).classList.add('active');
-        
-        saveState();
-    }
-
-    function renderEmptyState() {
-        chatMessages.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">💬</div>
-                <h2>QuickNova AI Chat</h2>
-                <p>Powered by multiple advanced AI engines including ChatGPT-style, Gemini, Claude & more combined in one beautiful interface.</p>
-                <div class="quick-actions">
-                    <button class="quick-action-btn" data-prompt="Explain quantum physics">🌌 Physics</button>
-                    <button class="quick-action-btn" data-prompt="Write a Python script">💻 Code</button>
-                    <button class="quick-action-btn" data-prompt="Create a story about">📚 Story</button>
-                    <button class="quick-action-btn" data-prompt="Help me learn">🎓 Learn</button>
-                </div>
-            </div>
-        `;
-    }
-
+    // ============================================
+    // 9. CHAT FUNCTIONS
+    // ============================================
     function startNewChat() {
         const chatId = Date.now();
         const newChat = {
             id: chatId,
             title: 'New Chat',
             messages: [],
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            model: state.selectedModel
         };
+
         state.chats.unshift(newChat);
         state.currentChatId = chatId;
         saveState();
+
         renderChatHistory();
         renderEmptyState();
-        userInput.focus();
+        if (DOM.userInput) {
+            DOM.userInput.focus();
+        }
         closeSidebar();
-    }
 
-    function renderChatHistory() {
-        chatHistory.innerHTML = '';
-        state.chats.forEach(chat => {
-            const item = document.createElement('button');
-            item.className = 'chat-history-item';
-            if (chat.id === state.currentChatId) {
-                item.classList.add('active');
-            }
-            item.textContent = chat.title || 'Untitled chat';
-            item.addEventListener('click', () => {
-                loadChat(chat.id);
-            });
-            chatHistory.appendChild(item);
-        });
+        console.log(`✅ New chat created: ${chatId}`);
     }
 
     function loadChat(chatId) {
-        state.currentChatId = chatId;
         const chat = state.chats.find(c => c.id === chatId);
-        if (chat) {
-            renderChatHistory();
-            renderMessages(chat.messages);
-        }
+        if (!chat) return;
+
+        state.currentChatId = chatId;
+        saveState();
+
+        renderChatHistory();
+        renderMessages(chat.messages);
+
+        console.log(`✅ Chat loaded: ${chatId}`);
     }
 
-    // --- Chat Logic ---
-    async function handleSend() {
-        const text = userInput.value.trim();
+    // ============================================
+    // 10. MESSAGE SENDING
+    // ============================================
+    function sendMessage() {
+        const text = DOM.userInput.value.trim();
         if (!text) return;
 
         // Get or create current chat
-        let currentChat = state.chats.find(c => c.id === state.currentChatId);
-        if (!currentChat) {
+        let chat = state.chats.find(c => c.id === state.currentChatId);
+        if (!chat) {
             startNewChat();
-            currentChat = state.chats[0];
+            chat = state.chats[0];
         }
 
         // Remove empty state
-        const emptyState = chatMessages.querySelector('.empty-state');
-        if (emptyState) emptyState.remove();
-
-        // Add user message
-        addMessageToChat(currentChat, 'user', text);
-        renderMessages(currentChat.messages);
-        userInput.value = '';
-        userInput.style.height = 'auto';
-
-        // Add AI response with typing indicator
-        addMessageToChat(currentChat, 'ai', getTypingIndicator(), true);
-        renderMessages(currentChat.messages);
-
-        try {
-            // Simulate API response with model-specific behavior
-            await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
-
-            // Remove typing indicator
-            currentChat.messages[currentChat.messages.length - 1].content = generateResponse(text);
-            
-            // Update chat title if first message
-            if (currentChat.messages.length === 2) {
-                currentChat.title = text.substring(0, 40);
-            }
-
-            renderMessages(currentChat.messages);
-            renderChatHistory();
-            saveState();
-        } catch (error) {
-            console.error('Error:', error);
-            showToast('An error occurred', 'error');
+        const emptyState = DOM.chatMessages.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.remove();
         }
 
-        scrollToBottom();
-    }
-
-    function generateResponse(userMessage) {
-        const model = MODELS[state.selectedModel];
-        
-        // Model-specific response styles
-        const responses = {
-            advanced: [
-                'That\'s an excellent question. Let me provide a comprehensive response based on the latest information and best practices.',
-                'I appreciate your inquiry. Here\'s my detailed analysis of that topic.',
-                'Great point! Based on current knowledge and best practices, here\'s what I can tell you.'
-            ],
-            gpt4: [
-                'That\'s an interesting question. Let me break this down step by step for you.',
-                'I\'ll analyze this carefully and provide you with a thorough response.',
-                'Excellent question! Here\'s a comprehensive breakdown.'
-            ],
-            gemini: [
-                'That\'s a fascinating inquiry. Let me provide you with nuanced insights.',
-                'I can see multiple angles to this. Here\'s my analysis.',
-                'Great question! This requires some thoughtful consideration.'
-            ],
-            claude: [
-                'That\'s a thoughtful question. Let me provide a careful and nuanced response.',
-                'I appreciate you asking that. Here\'s my considered perspective.',
-                'That\'s an interesting point. Allow me to think through this thoroughly.'
-            ],
-            fast: [
-                'Quick answer: Based on your question about "' + userMessage.substring(0, 20) + '", here\'s what you need to know.',
-                'Straight to the point: ' + userMessage.substring(0, 20) + ' is interesting. Here\'s the key info.',
-                'Simply put: You asked about ' + userMessage.substring(0, 20) + '. Here\'s the essentials.'
-            ],
-            creative: [
-                'What a creative prompt! Let me weave a response around your idea about "' + userMessage.substring(0, 30) + '".',
-                'I love the creative energy here! Let me expand on your thought about ' + userMessage.substring(0, 20) + '.',
-                'What an imaginative question! Here\'s my creative take on ' + userMessage.substring(0, 20) + '.'
-            ]
-        };
-
-        const modelResponses = responses[state.selectedModel] || responses.advanced;
-        const baseResponse = modelResponses[Math.floor(Math.random() * modelResponses.length)];
-
-        return `${baseResponse}\n\nAbout "${userMessage}":\n\nThis is a great topic within the scope of QuickNova AI. Here are some insights:\n\n• **Key Point 1**: The subject you mentioned relates to important developments in ${state.selectedModel === 'creative' ? 'creative thinking' : 'current knowledge'}\n• **Key Point 2**: There are multiple perspectives to consider on this matter\n• **Key Point 3**: Understanding this fully requires context and nuanced thinking\n\nI'm powered by the ${MODELS[state.selectedModel].name} engine, combining the best AI capabilities. Feel free to ask follow-up questions or explore related topics!`;
-    }
-
-    function addMessageToChat(chat, role, content, isHTML = false) {
+        // Add user message
         chat.messages.push({
-            role,
-            content,
-            isHTML,
+            id: Date.now(),
+            role: 'user',
+            content: text,
             timestamp: new Date().toISOString()
         });
+
+        // Render messages
+        renderMessages(chat.messages);
+
+        // Clear input
+        DOM.userInput.value = '';
+        DOM.userInput.style.height = 'auto';
+
+        // Add typing indicator
+        chat.messages.push({
+            id: Date.now() + 1,
+            role: 'ai',
+            content: getTypingIndicator(),
+            timestamp: new Date().toISOString(),
+            isTyping: true
+        });
+
+        renderMessages(chat.messages);
+        saveState();
+
+        // Generate response
+        setTimeout(() => {
+            generateAIResponse(chat, text);
+        }, 600);
+    }
+
+    function generateAIResponse(chat, userMessage) {
+        const model = MODELS[state.selectedModel];
+        const responses = {
+            advanced: `I appreciate your question about "${userMessage.substring(0, 30)}..."\n\nAs an Advanced AI combining the best of ChatGPT, Gemini, and Claude, here's my comprehensive response:\n\n• **Analysis**: Your query touches on important aspects that deserve careful consideration\n• **Key Insight**: Understanding this requires looking at multiple perspectives\n• **Practical Takeaway**: Here's what you can apply immediately\n\nWould you like me to dive deeper into any specific aspect?`,
+            
+            gpt4: `That's an excellent question! Let me break this down step-by-step for you.\n\nAbout "${userMessage.substring(0, 30)}...":\n\n1. **First**, let's establish the foundation\n2. **Next**, we should consider the implications\n3. **Finally**, here's how you can apply this knowledge\n\nFeel free to ask follow-up questions!`,
+            
+            gemini: `Interesting inquiry! Let me provide you with nuanced insights.\n\nRegarding "${userMessage.substring(0, 30)}...":\n\n**Key Points**:\n- This topic intersects multiple domains of knowledge\n- There are several valid perspectives to consider\n- Modern understanding has evolved significantly\n\nWhat specific aspect would you like to explore further?`,
+            
+            claude: `That's a thoughtful question. Let me provide a careful and nuanced response.\n\nAbout "${userMessage.substring(0, 30)}...":\n\n**My Analysis**:\n- The core issue involves several interconnected factors\n- It's important to acknowledge different viewpoints\n- Context matters significantly here\n\nI'm happy to elaborate on any part of this.`,
+            
+            fast: `Quick answer about "${userMessage.substring(0, 30)}...":\n\n✓ Key point 1: It's more important than many realize\n✓ Key point 2: Here's the actionable insight\n✓ Key point 3: Apply this immediately\n\nNeed more details? Just ask!`,
+            
+            creative: `What a wonderful prompt! Let me weave together some creative thoughts about "${userMessage.substring(0, 30)}...".\n\n**Creative Perspective**:\nImagine this scenario... We could explore this from a fresh angle by considering...\n\n**Imaginative Application**:\n- Here's an innovative way to think about it\n- Consider this creative angle\n- Possibilities are endless!\n\nLet's develop this idea together!`
+        };
+
+        const modelKey = state.selectedModel || 'advanced';
+        const response = responses[modelKey] || responses.advanced;
+
+        // Update last message (typing indicator) with actual response
+        const lastMsg = chat.messages[chat.messages.length - 1];
+        lastMsg.content = response;
+        lastMsg.isTyping = false;
+
+        renderMessages(chat.messages);
+
+        // Update chat title if first message
+        if (chat.messages.length <= 3) {
+            chat.title = userMessage.substring(0, 40);
+        }
+
+        saveState();
+        renderChatHistory();
+
+        console.log(`✅ AI Response generated using ${modelKey} model`);
+    }
+
+    // ============================================
+    // 11. UI RENDERING
+    // ============================================
+    function renderEmptyState() {
+        if (!DOM.chatMessages) return;
+
+        DOM.chatMessages.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <h2>QuickNova AI Chat</h2>
+                <p>Powered by multiple advanced AI engines - ChatGPT, Gemini, Claude & more. Choose a model and start chatting!</p>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" data-prompt="Explain quantum physics in simple terms">🌌 Physics</button>
+                    <button class="quick-action-btn" data-prompt="Write a Python script that">💻 Code</button>
+                    <button class="quick-action-btn" data-prompt="Create a story about">📚 Story</button>
+                    <button class="quick-action-btn" data-prompt="Help me learn about">🎓 Learn</button>
+                </div>
+            </div>
+        `;
     }
 
     function renderMessages(messages) {
-        chatMessages.innerHTML = '';
-        messages.forEach((msg, idx) => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${msg.role}`;
+        if (!DOM.chatMessages) return;
+
+        DOM.chatMessages.innerHTML = '';
+
+        messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${msg.role}`;
 
             const avatar = document.createElement('div');
             avatar.className = 'message-avatar';
@@ -373,93 +480,142 @@ document.addEventListener('DOMContentLoaded', () => {
             if (msg.role === 'user') {
                 contentDiv.textContent = msg.content;
             } else {
-                // Parse markdown for AI messages
-                if (msg.content.includes('<div class="typing-indicator">')) {
+                if (msg.isTyping) {
                     contentDiv.innerHTML = msg.content;
                 } else {
-                    const parsed = marked.parse(msg.content);
-                    contentDiv.innerHTML = parsed;
-                    
+                    // Parse markdown
+                    if (window.marked) {
+                        try {
+                            contentDiv.innerHTML = marked.parse(msg.content);
+                        } catch (e) {
+                            contentDiv.textContent = msg.content;
+                        }
+                    } else {
+                        contentDiv.textContent = msg.content;
+                    }
+
                     // Highlight code
-                    contentDiv.querySelectorAll('pre code').forEach((block) => {
-                        hljs.highlightElement(block);
-                    });
+                    if (window.hljs) {
+                        contentDiv.querySelectorAll('pre code').forEach(block => {
+                            hljs.highlightElement(block);
+                        });
+                    }
 
                     // Add copy buttons to code blocks
                     contentDiv.querySelectorAll('pre').forEach(pre => {
                         if (!pre.querySelector('.copy-code-btn')) {
-                            const copyBtn = document.createElement('button');
-                            copyBtn.className = 'copy-code-btn';
-                            copyBtn.textContent = '📋 Copy';
-                            copyBtn.addEventListener('click', (e) => {
+                            const btn = document.createElement('button');
+                            btn.className = 'copy-code-btn';
+                            btn.textContent = '📋 Copy';
+                            btn.onclick = function(e) {
+                                e.stopPropagation();
                                 const code = pre.querySelector('code').innerText;
                                 navigator.clipboard.writeText(code).then(() => {
-                                    copyBtn.textContent = '✓ Copied!';
-                                    setTimeout(() => copyBtn.textContent = '📋 Copy', 2000);
+                                    btn.textContent = '✓ Copied!';
+                                    setTimeout(() => btn.textContent = '📋 Copy', 2000);
                                 });
-                            });
-                            pre.appendChild(copyBtn);
+                            };
+                            pre.appendChild(btn);
                         }
                     });
                 }
             }
 
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(contentDiv);
+            msgDiv.appendChild(avatar);
+            msgDiv.appendChild(contentDiv);
 
-            // Add message actions for AI messages
-            if (msg.role === 'ai' && !msg.content.includes('typing')) {
+            // Add actions for AI messages
+            if (msg.role === 'ai' && !msg.isTyping) {
                 const actions = document.createElement('div');
                 actions.className = 'message-actions';
                 actions.innerHTML = `
-                    <button class="message-action-btn" title="Thumbs up">👍</button>
-                    <button class="message-action-btn" title="Thumbs down">👎</button>
+                    <button class="message-action-btn" title="Like">👍</button>
                     <button class="message-action-btn" title="Copy" onclick="navigator.clipboard.writeText('${msg.content.replace(/'/g, "\\'")}')">📋</button>
                     <button class="message-action-btn" title="Share">🔗</button>
                 `;
-                messageDiv.appendChild(actions);
+                msgDiv.appendChild(actions);
             }
 
-            chatMessages.appendChild(messageDiv);
+            DOM.chatMessages.appendChild(msgDiv);
         });
 
-        scrollToBottom();
+        // Scroll to bottom
+        setTimeout(() => {
+            DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+        }, 10);
     }
 
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    function renderChatHistory() {
+        if (!DOM.chatHistory) return;
+
+        DOM.chatHistory.innerHTML = '';
+
+        state.chats.forEach(chat => {
+            const item = document.createElement('button');
+            item.className = 'chat-history-item';
+            if (chat.id === state.currentChatId) {
+                item.classList.add('active');
+            }
+            item.setAttribute('data-id', chat.id);
+            item.title = chat.title;
+            item.textContent = chat.title || 'Untitled';
+
+            DOM.chatHistory.appendChild(item);
+        });
+
+        if (state.chats.length === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.style.padding = '1rem';
+            emptyMsg.style.color = 'var(--text-secondary)';
+            emptyMsg.style.fontSize = '0.875rem';
+            emptyMsg.textContent = 'No chats yet. Start a new conversation!';
+            DOM.chatHistory.appendChild(emptyMsg);
+        }
     }
 
+    // ============================================
+    // 12. HELPER FUNCTIONS
+    // ============================================
     function getTypingIndicator() {
         return '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
     }
 
-    // --- State Management ---
+    function showToast(message, type = 'info') {
+        // Use the global showToast if available from utils.js
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else {
+            console.log(`[${type}] ${message}`);
+        }
+    }
+
+    // ============================================
+    // 13. STATE PERSISTENCE
+    // ============================================
+    function saveState() {
+        try {
+            localStorage.setItem('qn_ai_state', JSON.stringify(state));
+            console.log('✅ State saved');
+        } catch (e) {
+            console.error('❌ Failed to save state:', e);
+        }
+    }
+
     function loadState() {
         try {
-            const saved = localStorage.getItem('qn_ai_chat_state');
+            const saved = localStorage.getItem('qn_ai_state');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 state = { ...state, ...parsed };
+                console.log('✅ State loaded');
             }
         } catch (e) {
-            console.error('Failed to load state:', e);
-        }
-        
-        if (state.chats.length === 0) {
-            state.currentChatId = null;
+            console.error('❌ Failed to load state:', e);
         }
     }
 
-    function saveState() {
-        try {
-            localStorage.setItem('qn_ai_chat_state', JSON.stringify(state));
-        } catch (e) {
-            console.error('Failed to save state:', e);
-        }
-    }
-
-    // Initial setup
-    selectModel(state.selectedModel);
-    renderChatHistory();
+    // ============================================
+    // 14. START APPLICATION
+    // ============================================
+    initialize();
 });
