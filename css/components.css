@@ -261,20 +261,31 @@
 .ad-slot {
     background: var(--bg);
     border: 1px dashed var(--border-subtle);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: var(--text-muted);
     font-size: 0.8rem;
     margin: 2rem 0;
     border-radius: 8px;
     overflow: hidden;
+    text-align: center;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.ad-header { height: 90px; }
-.ad-sidebar { height: 600px; }
-.ad-content { height: 250px; }
-.ad-footer { height: 100px; }
+.ad-slot span {
+    display: block;
+    padding: 0.5rem;
+}
+
+.ad-header { min-height: 90px; }
+.ad-sidebar { min-height: 600px; }
+.ad-content { min-height: 250px; }
+.ad-content-bottom { min-height: 150px; }
+.ad-footer { min-height: 100px; }
+.ad-banner-top { min-height: 100px; }
+.ad-mid-content { min-height: 100px; }
+.ad-sticky-bottom { min-height: 80px; }
 
 /* Theme Toggle */
 .theme-toggle {

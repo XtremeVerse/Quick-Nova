@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     initAnalytics();
-    initAds();
     initTheme();
     initMobileMenu();
     initToolsGrid();
@@ -15,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initTrending();
     initInvite();
     initHomeShareNudge();
+    // Initialize ads after all DOM elements are in place
+    setTimeout(() => initAds(), 100);
 });
 
 function initAnalytics() {
@@ -44,6 +45,7 @@ function initAds() {
             }
         }
     }
+    
     class SmartAds {
         constructor() {
             this.max = 5;
@@ -66,6 +68,7 @@ function initAds() {
             }, { passive: true });
             this.debug = false;
             this.debugUI = null;
+            this.loadedCount = 0;
         }
         canLoad() {
             if (this.optOut) return false;
@@ -74,6 +77,7 @@ function initAds() {
         }
         inc() {
             this.views += 1;
+            this.loadedCount += 1;
             try {
                 sessionStorage.setItem('qn_ad_views', String(this.views));
             } catch (e) {}
@@ -89,52 +93,75 @@ function initAds() {
             const s = document.createElement('script');
             s.src = src;
             s.async = true;
-            s.onload = onload;
             s.onerror = onerror;
+            if (onload) {
+                s.onload = onload;
+            }
             return s;
         }
         load(type, slot) {
-            if (!this.canLoad()) return;
+            if (!this.canLoad()) {
+                if (slot) {
+                    slot.innerHTML = '<span style="color: var(--text-muted); font-size: 0.75rem;">Ad limit reached</span>';
+                }
+                return;
+            }
+            
             if (type === 'BANNER') {
                 if (!slot) return;
                 this.inc();
-                const setup = document.createElement('script');
-                setup.type = 'text/javascript';
-                setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
-                const src = this.createScript(
-                    'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js',
-                    () => this.report('BANNER', 'Loaded'),
-                    () => this.report('BANNER', 'Error')
-                );
-                slot.innerHTML = '';
-                slot.appendChild(setup);
-                slot.appendChild(src);
+                try {
+                    const setup = document.createElement('script');
+                    setup.type = 'text/javascript';
+                    setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
+                    const src = this.createScript(
+                        'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js',
+                        () => this.report('BANNER', 'Loaded'),
+                        () => this.report('BANNER', 'Error')
+                    );
+                    slot.innerHTML = '';
+                    slot.appendChild(setup);
+                    slot.appendChild(src);
+                } catch (e) {
+                    console.error('Banner ad error:', e);
+                    this.report('BANNER', 'Error', e.message);
+                }
                 return;
             }
             if (type === 'NATIVE') {
                 if (!slot) return;
                 this.inc();
-                const div = document.createElement('div');
-                div.id = 'container-b03554437e27c7af7c3e026651b104da';
-                slot.innerHTML = '';
-                slot.appendChild(div);
-                const s = this.createScript(
-                    'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
-                    () => this.report('NATIVE', 'Loaded'),
-                    () => this.report('NATIVE', 'Error')
-                );
-                s.setAttribute('data-cfasync', 'false');
-                slot.appendChild(s);
+                try {
+                    const div = document.createElement('div');
+                    div.id = 'container-b03554437e27c7af7c3e026651b104da';
+                    slot.innerHTML = '';
+                    slot.appendChild(div);
+                    const s = this.createScript(
+                        'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
+                        () => this.report('NATIVE', 'Loaded'),
+                        () => this.report('NATIVE', 'Error')
+                    );
+                    s.setAttribute('data-cfasync', 'false');
+                    slot.appendChild(s);
+                } catch (e) {
+                    console.error('Native ad error:', e);
+                    this.report('NATIVE', 'Error', e.message);
+                }
                 return;
             }
             if (type === 'POPUNDER') {
                 this.inc();
-                const s = this.createScript(
-                    'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js',
-                    () => this.report('POPUNDER', 'Loaded'),
-                    () => this.report('POPUNDER', 'Error')
-                );
-                document.body.appendChild(s);
+                try {
+                    const s = this.createScript(
+                        'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js',
+                        () => this.report('POPUNDER', 'Loaded'),
+                        () => this.report('POPUNDER', 'Error')
+                    );
+                    document.body.appendChild(s);
+                } catch (e) {
+                    console.error('Popunder ad error:', e);
+                    this.report('POPUNDER', 'Error', e.message);
+                }
                 return;
             }
             if (type === 'SOCIAL') {
@@ -142,21 +169,31 @@ function initAds() {
                     if (localStorage.getItem('qn_ad_socialbar') === '1') return;
                 } catch (e) { return; }
                 this.inc();
-                const s = this.createScript(
-                    'https://pl28401272.effectivegatecpm.com/51/1c/44/511c447359e25338ff26c7f09b965585.js',
-                    () => this.report('SOCIAL', 'Loaded'),
-                    () => this.report('SOCIAL', 'Error')
-                );
-                document.body.appendChild(s);
                 try {
-                    localStorage.setItem('qn_ad_socialbar', '1');
-                } catch (e) {}
+                    const s = this.createScript(
+                        'https://pl28401272.effectivegatecpm.com/51/1c/44/511c447359e25338ff26c7f09b965585.js',
+                        () => this.report('SOCIAL', 'Loaded'),
+                        () => this.report('SOCIAL', 'Error')
+                    );
+                    document.body.appendChild(s);
+                    try {
+                        localStorage.setItem('qn_ad_socialbar', '1');
+                    } catch (e) {}
+                } catch (e) {
+                    console.error('Social ad error:', e);
+                    this.report('SOCIAL', 'Error', e.message);
+                }
                 return;
             }
             if (type === 'SMARTLINK') {
                 this.inc();
-                window.open('https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41', '_blank');
-                this.report('SMARTLINK', 'Opened');
+                try {
+                    window.open('https://www.effectivegatecpm.com/fvznyr7n0?key=a1519af8bf932ac2fa9472383580fc41', '_blank');
+                    this.report('SMARTLINK', 'Opened');
+                } catch (e) {
+                    console.error('Smartlink error:', e);
+                    this.report('SMARTLINK', 'Error', e.message);
+                }
                 return;
             }
         }
