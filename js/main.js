@@ -148,12 +148,12 @@ function initAds() {
         }
         createScript(src, onload, onerror) {
             const s = document.createElement('script');
+            // Lazy-load ad scripts to avoid blocking and to respect consent
             s.src = src;
             s.async = true;
+            s.defer = true;
             s.onerror = onerror;
-            if (onload) {
-                s.onload = onload;
-            }
+            if (onload) s.onload = onload;
             return s;
         }
         load(type, slot) {
@@ -171,6 +171,14 @@ function initAds() {
                     const setup = document.createElement('script');
                     setup.type = 'text/javascript';
                     setup.text = "atOptions={'key':'2ac4da0ed6a6a60d4a1613d2215e7dd1','format':'iframe','height':60,'width':468,'params':{}};";
+                    // Only load heavy banner scripts on non-mobile AND after consent
+                    const consent = (function(){ try{ return localStorage.getItem('qn_consent')==='granted'; }catch(e){return false;} })();
+                    const isMobile = window.innerWidth <= 768;
+                    if (!consent || isMobile) {
+                        slot.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:0.9rem;">Ad space (non-intrusive)</div>';
+                        this.report('BANNER','Deferred','Mobile or no consent');
+                        return;
+                    }
                     const src = this.createScript(
                         'https://www.highperformanceformat.com/2ac4da0ed6a6a60d4a1613d2215e7dd1/invoke.js',
                         () => this.report('BANNER', 'Loaded'),
@@ -197,22 +205,36 @@ function initAds() {
                         'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
                         () => this.report('NATIVE', 'Loaded'),
                         () => this.report('NATIVE', 'Error')
-                    );
-                    s.setAttribute('data-cfasync', 'false');
-                    slot.appendChild(s);
-                } catch (e) {
-                    console.error('Native ad error:', e);
-                    this.report('NATIVE', 'Error', e.message);
-                }
-                return;
-            }
-            if (type === 'POPUNDER') {
-                this.inc();
-                try {
-                    const s = this.createScript(
-                        'https://pl28401259.effectivegatecpm.com/e8/8b/0a/e88b0a7e5bf67f132b4d12b1d2d97af2.js',
-                        () => this.report('POPUNDER', 'Loaded'),
-                        () => this.report('POPUNDER', 'Error')
+                    try {
+                        const consent = (function(){ try{ return localStorage.getItem('qn_consent')==='granted'; }catch(e){return false;} })();
+                        const isMobile = window.innerWidth <= 768;
+                        if (!consent) {
+                            slot.innerHTML = '<div style="padding:10px;color:var(--text-muted);font-size:0.9rem;">Ad (consent required)</div>';
+                            this.report('NATIVE','Deferred','No consent');
+                            return;
+                        }
+                        if (isMobile) {
+                            // Load a lightweight native placeholder on mobile
+                            slot.innerHTML = '<div style="padding:10px;color:var(--text-muted);font-size:0.9rem;">Sponsored - try our premium tools</div>';
+                            this.report('NATIVE','Placeholder','Mobile lightweight');
+                            this.inc();
+                            return;
+                        }
+                        const div = document.createElement('div');
+                        div.id = 'container-b03554437e27c7af7c3e026651b104da';
+                        slot.innerHTML = '';
+                        slot.appendChild(div);
+                        const s = this.createScript(
+                            'https://pl28401263.effectivegatecpm.com/b03554437e27c7af7c3e026651b104da/invoke.js',
+                            () => this.report('NATIVE', 'Loaded'),
+                            () => this.report('NATIVE', 'Error')
+                        );
+                        s.setAttribute('data-cfasync', 'false');
+                        slot.appendChild(s);
+                    } catch (e) {
+                        console.error('Native ad error:', e);
+                        this.report('NATIVE', 'Error', e.message);
+                    }
                     );
                     document.body.appendChild(s);
                 } catch (e) {
@@ -582,6 +604,11 @@ function initMobileSmartFeatures() {
     
     // Add tap-friendly search
     enhanceMobileSearch();
+    
+    // Bottom navigation for mobile
+    initMobileBottomBar();
+    // Auto-hide header on scroll for immersive mobile view
+    initHeaderAutoHide();
 }
 
 function enableSwipeGestures() {
@@ -613,6 +640,73 @@ function enableSwipeGestures() {
             }
         }
     }
+}
+
+function initMobileBottomBar() {
+    if (!isMobileView()) return;
+    if (document.getElementById('qn-mobile-bar')) return;
+    const bar = document.createElement('nav');
+    bar.id = 'qn-mobile-bar';
+    bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:var(--bg-elevated);border-top:1px solid var(--border-subtle);display:flex;justify-content:space-around;padding:8px 6px;gap:6px;box-shadow:var(--shadow-soft);';
+
+    const btns = [
+        {id:'home', icon:'🏠', href:'/'},
+        {id:'tools', icon:'🧰', href:'/tools/'},
+        {id:'share', icon:'🔗', action:'share'},
+        {id:'theme', icon:'🌓', action:'theme'},
+        {id:'search', icon:'🔎', action:'search'}
+    ];
+
+    btns.forEach(b => {
+        const el = document.createElement('button');
+        el.className = 'btn-icon';
+        el.style.cssText = 'background:none;border:none;font-size:1.25rem;display:flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;min-width:48px;min-height:44px;';
+        el.innerHTML = b.icon;
+        if (b.href) el.addEventListener('click', () => location.href = b.href);
+        if (b.action === 'share') el.addEventListener('click', async () => {
+            const url = window.location.href;
+            if (navigator.share) { try { await navigator.share({ title: document.title, url }); if (window.gtag) gtag('event','share',{method:'navigator'}); } catch(_){} }
+            else { try { await navigator.clipboard.writeText(url); if (window.gtag) gtag('event','share',{method:'copy'}); if (typeof showToast!=='undefined') showToast('Link copied', 'info'); } catch(_){} }
+        });
+        if (b.action === 'theme') el.addEventListener('click', () => {
+            const cur = document.documentElement.getAttribute('data-theme');
+            const nw = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', nw);
+            try { localStorage.setItem('theme', nw); } catch(e){}
+            updateThemeIcon(nw === 'dark');
+        });
+        if (b.action === 'search') el.addEventListener('click', () => {
+            const s = document.querySelector('.search-input, input[type="search"]'); if (s) { s.focus(); window.scrollTo({top: s.getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'}); }
+        });
+        bar.appendChild(el);
+    });
+
+    document.body.appendChild(bar);
+    // ensure body has safe bottom padding so content isn't hidden
+    document.body.style.paddingBottom = Math.max(parseInt(getComputedStyle(document.body).paddingBottom||0), 70) + 'px';
+}
+
+function initHeaderAutoHide() {
+    if (!isMobileView()) return;
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+    let lastY = window.scrollY;
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(() => {
+            const y = window.scrollY;
+            if (y > lastY && y > 80) {
+                // scrolling down
+                header.style.transform = 'translateY(-100%)';
+                header.style.transition = 'transform 0.25s ease';
+            } else {
+                header.style.transform = '';
+            }
+            lastY = y;
+            ticking = false;
+        });
+    }, { passive: true });
 }
 
 function enhanceMobileSearch() {
@@ -1278,7 +1372,11 @@ function initShareUI() {
     });
     copyBtn.addEventListener('click', async () => {
         try {
-            await navigator.clipboard.writeText(url.toString());
+            // append referral if exists
+            const ref = (function(){ try{ return localStorage.getItem('qn_referral_code'); }catch(e){return null;} })();
+            const full = new URL(url.toString());
+            if (ref) full.searchParams.set('ref', ref);
+            await navigator.clipboard.writeText(full.toString());
             if (window.gtag) gtag('event', 'copy_link', { page: window.location.pathname });
             if (typeof showToast !== 'undefined') showToast('Link copied to clipboard', 'info');
         } catch(e) {}
@@ -1307,6 +1405,21 @@ function initToolSchema() {
     s.text = JSON.stringify(schema);
     document.head.appendChild(s);
 }
+
+// Handle referral query param on landing
+(function handleReferralParam(){
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        if (!ref) return;
+        // store the ref for later attribution
+        try { localStorage.setItem('qn_last_ref', ref); } catch (e) {}
+        // Optionally show a subtle thank you
+        setTimeout(() => {
+            if (typeof showToast !== 'undefined') showToast('Thanks for visiting via referral!', 'info');
+        }, 1200);
+    } catch (e) {}
+})();
 
 function initTrending() {
     const grid = document.getElementById('trending-tools');
